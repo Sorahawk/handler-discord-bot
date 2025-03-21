@@ -26,12 +26,7 @@ async def display_weekly_quests():
 	if today.weekday() != 2:  # only continue on Wednesdays
 		return
 
-	# display start and end dates of new week
-	output_format = '%#d %B'
-	start_date = today.strftime(output_format)
-	end_date = (today + timedelta(days=7)).strftime(output_format)
-
-	greeting_msg = f"Greetings, Hunters! It's the start of a new week!\n\nFrom **{start_date}** to **{end_date}**, the Guild has authorised the following hunts!\n\u200b"
+	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
 	await global_constants.MAIN_CHANNEL.send(greeting_msg)
 	await process_weekly_quests(global_constants.MAIN_CHANNEL, week_index=0)
 
@@ -52,7 +47,7 @@ async def on_message(message):
 		if len(contents) > 1 and contents[1].isdigit():  # check if command contained week_index as additional argument
 			week_index = int(contents[1])
 
-		await process_weekly_quests(message.channel, week_index=week_index, display_message=True)
+		await process_weekly_quests(message.channel, week_index=week_index)
 
 
 @bot.event
