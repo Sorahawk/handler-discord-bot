@@ -45,6 +45,7 @@ async def process_weekly_quests(channel, week_index=0):
 	except Exception as e:
 		await channel.send(f"ERROR: {e}")
 		await channel.send(f"html_data: {html_data}")
+		return
 
 	# get dates of specified week
 	specified_range = date_ranges[week_index]
