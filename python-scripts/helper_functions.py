@@ -43,8 +43,8 @@ async def process_weekly_quests(channel, week_index=0):
 		date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
 
 	except Exception as e:
-		print(f"ERROR: {e}")
-		print(f"html_data: {html_data}")
+		await channel.send(f"ERROR: {e}")
+		await channel.send(f"html_data: {html_data}")
 
 	# get dates of specified week
 	specified_range = date_ranges[week_index]
