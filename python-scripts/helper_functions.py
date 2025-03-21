@@ -37,11 +37,16 @@ def create_quest_embed(quest_details):
 
 # sends all quests within a specified week as embed messages
 async def process_weekly_quests(channel, week_index=0):
-	events_webpage = requests.get(EVENT_QUEST_URL, headers=STANDARD_HEADERS).text
-	html_data = html.fromstring(events_webpage)
+	try:
+		events_webpage = requests.get(EVENT_QUEST_URL, headers=STANDARD_HEADERS).text
+		html_data = html.fromstring(events_webpage)
+		date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
+
+	except Exception as e:
+		print(f"ERROR: {e}")
+		print(f"html_data: {html_data}")
 
 	# get dates of specified week
-	date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
 	specified_range = date_ranges[week_index]
 
 	specified_range.xpath('span')[0].drop_tree()  # drop the span elements to ignore the 'This/next week' text
