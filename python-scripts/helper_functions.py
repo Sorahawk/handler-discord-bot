@@ -38,7 +38,7 @@ def create_quest_embed(quest_details):
 # sends all quests within a specified week as embed messages
 async def process_weekly_quests(channel, week_index=0):
 	events_webpage = requests.get(EVENT_QUEST_URL, headers=STANDARD_HEADERS).text
-	html_data = html.fromstring(events_webpage.text)
+	html_data = html.fromstring(events_webpage)
 
 	# get dates of specified week
 	date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
@@ -61,7 +61,7 @@ async def process_weekly_quests(channel, week_index=0):
 		await channel.send(no_info_msg)
 		return
 
-	# TODO: display message containing dates of specified week
+	# display message containing start and end dates of specified week
 	dates_msg = f"From **{start_date}** to **{end_date}**, the Guild has authorised the following hunts!\n\u200b"
 	await channel.send(dates_msg)
 
