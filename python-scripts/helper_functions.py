@@ -63,7 +63,7 @@ async def process_weekly_quests(channel, week_index=0):
 	quest_table = html_data.find_class('tableArea')[week_index]
 
 	if quest_table.find_class('coming-quest'):
-		no_info_msg = f"I'm still awaiting correspondence from the Guild regarding authorised hunts for the week of {start_date} to {end_date}.\n\nTry checking back again in a few days!"
+		no_info_msg = f"I'm still awaiting correspondence from the Guild regarding authorised hunts for the week of **{start_date}** to **{end_date}**.\n\nTry checking back again in a few days!"
 		await channel.send(no_info_msg)
 		return
 
