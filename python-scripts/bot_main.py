@@ -22,13 +22,12 @@ tz = timezone(timedelta(hours=8))  # UTC+8
 @loop(time=time(hour=8, minute=1, tzinfo=tz))  # 8.01am SGT, but Discord seems to execute the task a few seconds before the minute actually occurs. In this case, also give the website a minute to update to the next week
 async def display_weekly_quests():
 
-	today = datetime.now(tz)
-	if today.weekday() != 2:  # only continue on Wednesdays
+	if datetime.now(tz).weekday() != 2:  # only continue on Wednesdays
 		return
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
 	await global_constants.MAIN_CHANNEL.send(greeting_msg)
-	await process_weekly_quests(global_constants.MAIN_CHANNEL, week_index=0)
+	await process_weekly_quests(global_constants.MAIN_CHANNEL)
 
 
 @bot.event
@@ -43,9 +42,20 @@ async def on_message(message):
 
 	# quests command
 	if contents[0].lower() == 'quests':
-		week_index = -1
-		if len(contents) > 1 and contents[1].isdigit():  # check if command contained week_index as additional argument
-			week_index = int(contents[1])
+		week_index = 0
+
+		# handle week_index optional parameter
+		if len(contents) > 1:
+
+			if contents[1].lstrip('-').isdigit():  # allow negative integers
+				week_index = int(contents[1])
+
+			elif contents[1].lower() == 'now':
+				week_index = 0
+			elif contents[1].lower() == 'next':
+				week_index = 1
+			elif contents[1].lower() == 'latest':
+				week_index = -1
 
 		await process_weekly_quests(message.channel, week_index=week_index)
 
