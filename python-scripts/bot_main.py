@@ -34,10 +34,20 @@ async def display_weekly_quests():
 async def on_message(message):
 	prefix_length = len(BOT_COMMAND_PREFIX)  # prefix might not always be single character
 
-	# ignore any messages if bot is not ready, messages sent from the bot itself, or messages that don't start with the command prefix
-	if not bot.is_ready() or message.author == bot.user or message.content[:prefix_length] != BOT_COMMAND_PREFIX:
+	# ignore any messages if bot is not ready or messages sent from the bot itself
+	if not bot.is_ready() or message.author == bot.user:
 		return
 
+	# delete any user messages from the main announcements channel, to keep it clean
+	if message.channel.id == global_constants.MAIN_CHANNEL.id:
+		await message.delete()
+		return
+
+	# ignore messages that don't start with the command prefix
+	if message.content[:prefix_length] != BOT_COMMAND_PREFIX:
+		return
+
+	# process commands
 	contents = message.content[prefix_length:].split()
 
 	# quests command
