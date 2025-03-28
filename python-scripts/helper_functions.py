@@ -78,7 +78,12 @@ async def process_weekly_quests(channel, week_index=0):
 		details['image_url'] = quest.xpath('td/img')[0].get('src')
 		details['difficulty'] = quest.find_class('level')[0].text_content()
 		details['title'] = quest.find_class('title')[0].xpath('span')[0].text_content()
-		details['description'] = quest.find_class('txt')[0].text_content()
+
+		# insert '\n' to any <br> tags within the description text element
+		description = quest.find_class('txt')[0]
+		for br in description.xpath('br'):
+			br.text = '\n'
+		details['description'] = description.text_content()
 
 		# strip any excess whitespace for the values above
 		for key, value in details.items():
