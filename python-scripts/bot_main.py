@@ -48,10 +48,10 @@ async def on_message(message):
 		return
 
 	# process commands
-	contents = message.content[prefix_length:].split()
+	contents = message.content[prefix_length:].lower().split()
 
 	# quests command
-	if contents[0].lower() == 'quests':
+	if contents[0] == 'quests':
 		week_index = 0
 
 		# handle week_index optional parameter
@@ -60,11 +60,11 @@ async def on_message(message):
 			if contents[1].lstrip('-').isdigit():  # allow negative integers
 				week_index = int(contents[1])
 
-			elif contents[1].lower() == 'now':
+			elif contents[1] == 'now':
 				week_index = 0
-			elif contents[1].lower() == 'next':
+			elif contents[1] == 'next':
 				week_index = 1
-			elif contents[1].lower() == 'latest':
+			elif contents[1] == 'latest':
 				week_index = -1
 
 		await process_weekly_quests(message.channel, week_index=week_index)

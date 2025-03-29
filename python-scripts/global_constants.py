@@ -20,8 +20,13 @@ BOT_INSTANCE = None
 # symbol to signify bot commands
 BOT_COMMAND_PREFIX = '.'
 
-# color code for Embed messages
-EMBED_COLOR_CODE = 0xE28E37
+# color codes for Embed messages
+EMBED_COLOR_CODES = {
+	'2': 0xD8B863,  # yellow
+	'1': 0x0492C2,  # blue
+	'4': 0xDE3163,  # red
+	'3': 0x5DBB63,  # green
+}
 
 # URL for Event Quest webpage
 EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'

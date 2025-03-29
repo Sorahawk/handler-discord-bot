@@ -9,7 +9,7 @@ from discord import Embed, File
 
 # returns a formatted embed message containing quest details
 def create_quest_embed(quest_details):
-	embed_msg = Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=EMBED_COLOR_CODE)
+	embed_msg = Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=EMBED_COLOR_CODES[quest_details['color_index']])
 	embed_msg.add_field(name='Description', value=quest_details['description'], inline=False)
 
 	embed_msg.add_field(name='Objective', value=quest_details['completion_conditions'], inline=True)
@@ -22,9 +22,9 @@ def create_quest_embed(quest_details):
 	start_date = datetime.strptime(quest_details['start_date_and_time'], input_format).strftime(output_format)
 	end_date = datetime.strptime(quest_details['end_date_and_time'], input_format).strftime(output_format)
 
+	embed_msg.add_field(name='Category', value=quest_details['category_name'], inline=True)
 	embed_msg.add_field(name='Start', value=start_date, inline=True)
 	embed_msg.add_field(name='End', value=end_date, inline=True)
-	embed_msg.add_field(name='\u200b', value='\u200b', inline=True)
 
 	# Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 	# Thus, need to get the image data to pass into Discord directly
@@ -72,40 +72,50 @@ async def process_weekly_quests(channel, week_index=0):
 	await channel.send(dates_msg)
 
 	# display quests
-	for quest in quest_table.xpath('table/tbody/tr'):
-		details = {}
+	for quest_category in quest_table.xpath('table'):
 
-		details['image_url'] = quest.xpath('td/img')[0].get('src')
-		details['difficulty'] = quest.find_class('level')[0].text_content()
-		details['title'] = quest.find_class('title')[0].xpath('span')[0].text_content()
+		# get category type (integer) and name
+		# there seems to be 1 to 4 based on website data
+		table_int = quest_category.get('class')[-1]
+		category_name = quest_table.find_class(f'tableTitle type{table_int}')[0].text_content().strip()[:-1]
 
-		# insert '\n' to any <br> tags within the description text element
-		description = quest.find_class('txt')[0]
-		for br in description.xpath('br'):
-			br.text = '\n'
-		details['description'] = description.text_content()
+		for quest in quest_category.xpath('tbody/tr'):
+			details = {
+				'category_name': category_name,
+				'color_index': table_int
+			}
 
-		# strip any excess whitespace for the values above
-		for key, value in details.items():
-			details[key] = ' '.join(value.split())
+			details['image_url'] = quest.xpath('td/img')[0].get('src')
+			details['difficulty'] = quest.find_class('level')[0].text_content()
+			details['title'] = quest.find_class('title')[0].xpath('span')[0].text_content()
 
-		# retrieve details under 'Quest Info'
-		for entry in quest.find_class('overview')[0].xpath('ul/li'):
+			# insert '\n' to any <br> tags within the description text element
+			description = quest.find_class('txt')[0]
+			for br in description.xpath('br'):
+				br.text = '\n'
+			details['description'] = description.text_content()
 
-			key = entry.find_class('overview_dt')[0].text_content()
-			value = entry.find_class('overview_dd')[0].text_content()
-			
-			# remove any excess whitespace for both keys and values
-			key = ' '.join(key.split())
-			value = ' '.join(value.split())
+			# strip any excess whitespace for the values above
+			for key, value in details.items():
+				details[key] = ' '.join(value.split())
 
-			# lower the key names and replace whitespace with underscore
-			key = key.lower().replace(' ', '_')
+			# retrieve details under 'Quest Info'
+			for entry in quest.find_class('overview')[0].xpath('ul/li'):
 
-			# remove only the preceding colon, but cannot use .replace() because the Start/End quest timings contain colons as well
-			value = value[1:]
+				key = entry.find_class('overview_dt')[0].text_content()
+				value = entry.find_class('overview_dd')[0].text_content()
+				
+				# remove any excess whitespace for both keys and values
+				key = ' '.join(key.split())
+				value = ' '.join(value.split())
 
-			details[key] = value
+				# lower the key names and replace whitespace with underscore
+				key = key.lower().replace(' ', '_')
 
-		embed_msg, image = create_quest_embed(details)
-		await channel.send(embed=embed_msg, file=image)
+				# remove only the preceding colon, but cannot use .replace() because the Start/End quest timings contain colons as well
+				value = value[1:]
+
+				details[key] = value
+
+			embed_msg, image = create_quest_embed(details)
+			await channel.send(embed=embed_msg, file=image)
