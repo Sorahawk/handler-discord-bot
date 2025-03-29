@@ -51,7 +51,7 @@ async def on_message(message):
 	contents = message.content[prefix_length:].lower().split()
 
 	# quests command
-	if contents[0] == 'quests':
+	if contents[0] in ['quest', 'quests']:
 		week_index = 0
 
 		# handle week_index optional parameter
