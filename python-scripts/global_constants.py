@@ -22,10 +22,10 @@ BOT_COMMAND_PREFIX = '.'
 
 # color codes for Embed messages
 EMBED_COLOR_CODES = {
-	'2': 0xD8B863,  # yellow
 	'1': 0x0492C2,  # blue
-	'4': 0xDE3163,  # red
-	'3': 0x5DBB63,  # green
+	'2': 0xD8B863,  # yellow
+	'3': 0xDE3163,  # red
+	'4': 0x5DBB63,  # green
 }
 
 # URL for Event Quest webpage
