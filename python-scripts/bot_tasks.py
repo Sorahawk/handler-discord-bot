@@ -1,38 +1,68 @@
+import global_variables
+from global_variables import *
+
+from embed_functions import *
+
 import requests
 
-from global_constants import *
-from helper_functions import *
-
 from lxml import html
-from datetime import datetime
 from discord import Embed
+from datetime import datetime
+from googletrans import Translator
 
 
-# returns a formatted embed message containing quest details
-def create_quest_embed(quest_details):
-	embed_msg = Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=QUEST_COLOR_CODES[quest_details['color_index']])
-	embed_msg.add_field(name='Description', value=quest_details['description'], inline=False)
+# checks for the latest news articles
+async def check_latest_news():
+	news_webpage = requests.get(JAPANESE_NEWS_URL, headers=STANDARD_HEADERS).text
+	html_data = html.fromstring(news_webpage)
+	news_list = html_data.find_class('mhNews_list')[0]
 
-	embed_msg.add_field(name='Objective', value=quest_details['completion_conditions'], inline=True)
-	embed_msg.add_field(name='Locale', value=quest_details['locales'], inline=True)
-	embed_msg.add_field(name='Difficulty', value=quest_details['difficulty'], inline=True)
+	latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
 
-	# format dates
-	input_format = '%m.%d.%Y %H:%M'
-	output_format = f'%{NONZERO_DATETIME_SYMBOL}d %B, %I.%M %p'
-	start_date = datetime.strptime(quest_details['start_date_and_time'], input_format).strftime(output_format)
-	end_date = datetime.strptime(quest_details['end_date_and_time'], input_format).strftime(output_format)
+	# set latest article
+	if not global_variables.LATEST_NEWS_IMAGE:
+		global_variables.LATEST_NEWS_IMAGE = latest_image_link
 
-	embed_msg.add_field(name='Category', value=quest_details['category_name'], inline=True)
-	embed_msg.add_field(name='Start', value=start_date, inline=True)
-	embed_msg.add_field(name='End', value=end_date, inline=True)
+	# new articles detected
+	elif latest_image_link != global_variables.LATEST_NEWS_IMAGE:
+		embed_list = []
+		translator = Translator()
 
-	embed_msg, image_file = add_embed_image(quest_details['image_url'], embed_msg)
-	return embed_msg, image_file
+		for article in news_list:
+			image_link = article.xpath('li/figure/img')[0].get('src')
+
+			# break iteration once latest registered article is matched
+			if image_link == global_variables.LATEST_NEWS_IMAGE:
+				break
+
+			article_link = article.get('href')
+			date = article.find_class('date')[0].text_content().strip()
+
+			# extract specific category
+			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
+			category_name, category_color = NEWS_MAPPING[category_class]
+
+			# translate Japanese text to English
+			jap_caption = article.find_class('text')[0].text_content().strip()
+			eng_caption = (await translator.translate(jap_caption, src='ja', dest='en')).text
+
+			# create Embed message
+			embed_msg = Embed(title=jap_caption, url=article_link, color=category_color)
+			embed_msg.add_field(name=eng_caption, value='\u200b')
+
+			embed_msg, image_file = add_embed_image(image_link, embed_msg)
+			embed_list.append((embed_msg, image_file, image_link))
+
+		# send embeds in correct order (earliest to latest)
+		for article_embed in embed_list[::-1]:
+			await global_variables.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
+
+			# update tracking of latest article sent
+			global_variables.LATEST_NEWS_IMAGE = article_embed[-1]
 
 
 # sends all quests within a specified week as embed messages
-async def process_weekly_quests(channel, week_index=0):
+async def display_weekly_quests(channel, week_index=0):
 	try:
 		events_webpage = requests.get(EVENT_QUEST_URL, headers=STANDARD_HEADERS).text
 		html_data = html.fromstring(events_webpage)
