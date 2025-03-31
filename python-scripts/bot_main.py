@@ -1,9 +1,11 @@
 import global_constants
 
-from secret_variables import *
+from quest_functions import *
 from global_constants import *
 from helper_functions import *
+from secret_variables import *
 
+from googletrans import Translator
 from discord.ext.tasks import loop
 from discord import Activity, Client, Intents
 from datetime import datetime, time, timedelta, timezone
@@ -18,6 +20,56 @@ bot = Client(intents=intents)
 global_constants.BOT_INSTANCE = bot
 
 
+@loop(minutes=1)
+async def check_latest_news():
+	news_webpage = requests.get(JAPANESE_NEWS_URL, headers=STANDARD_HEADERS).text
+	html_data = html.fromstring(news_webpage)
+	news_list = html_data.find_class('mhNews_list')[0]
+
+	latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
+
+	# set latest article
+	if not global_constants.LATEST_NEWS_IMAGE:
+		global_constants.LATEST_NEWS_IMAGE = latest_image_link
+
+	# new articles detected
+	elif latest_image_link != global_constants.LATEST_NEWS_IMAGE:
+		embed_list = []
+		translator = Translator()
+
+		for article in news_list:
+			image_link = article.xpath('li/figure/img')[0].get('src')
+
+			# break iteration once latest registered article is matched
+			if image_link == global_constants.LATEST_NEWS_IMAGE:
+				break
+
+			article_link = article.get('href')
+			date = article.find_class('date')[0].text_content().strip()
+
+			# extract specific category
+			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
+			category_name, category_color = NEWS_MAPPING[category_class]
+
+			# translate Japanese text to English
+			jap_caption = article.find_class('text')[0].text_content().strip()
+			eng_caption = (await translator.translate(jap_caption, src='ja', dest='en')).text
+			print(eng_caption)
+
+			embed_msg = Embed(title=eng_caption, url=article_link, color=category_color)
+			embed_msg.add_field(name='Caption', value=caption, inline=False)
+
+			embed_msg, image_file = add_embed_image(image_link, embed_msg)
+			embed_list.append((embed_msg, image_file, image_link))
+
+		# send embeds in correct order (earliest to latest)
+		for article_embed in embed_list[::-1]:
+			await global_constants.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
+
+			# update tracking of latest article sent
+			global_constants.LATEST_NEWS_IMAGE = article_embed[-1]
+
+
 tz = timezone(timedelta(hours=8))  # UTC+8
 @loop(time=time(hour=8, minute=1, tzinfo=tz))  # 8.01am SGT, but Discord seems to execute the task a few seconds before the minute actually occurs. In this case, also give the website a minute to update to the next week
 async def display_weekly_quests():
@@ -26,8 +78,8 @@ async def display_weekly_quests():
 		return
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
-	await global_constants.MAIN_CHANNEL.send(greeting_msg)
-	await process_weekly_quests(global_constants.MAIN_CHANNEL)
+	await global_constants.QUEST_CHANNEL.send(greeting_msg)
+	await process_weekly_quests(global_constants.QUEST_CHANNEL)
 
 
 @bot.event
@@ -38,8 +90,8 @@ async def on_message(message):
 	if not bot.is_ready() or message.author == bot.user:
 		return
 
-	# delete any user messages from the main announcements channel, to keep it clean
-	if message.channel.id == global_constants.MAIN_CHANNEL.id:
+	# delete any user messages from the quest announcements channel to keep it clean
+	if message.channel.id == global_constants.QUEST_CHANNEL.id:
 		await message.delete()
 		return
 
@@ -54,7 +106,7 @@ async def on_message(message):
 	if contents[0] in ['quest', 'quests']:
 		week_index = 0
 
-		# handle week_index optional parameter
+		# handle optional parameter
 		if len(contents) > 1:
 			keyword = contents[1]
 
@@ -72,15 +124,17 @@ async def on_message(message):
 async def on_ready():
 	# on_ready() may be called more than once, typically whenever the bot momentarily loses connection to Discord 
 	# check if this is first time bot is calling on_ready()
-	if global_constants.MAIN_CHANNEL:
+	if global_constants.QUEST_CHANNEL:
 		return
 
 	print(f"{bot.user} is online.\n")
 
-	# initialise global main channel object
-	global_constants.MAIN_CHANNEL = bot.get_channel(MAIN_CHANNEL_ID)
+	# initialise global channel objects
+	global_constants.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
+	global_constants.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 
 	# start tasks
+	check_latest_news.start()
 	display_weekly_quests.start()
 
 	# set activity status
