@@ -1,22 +1,13 @@
-import global_variables
-from global_variables import *
-
-from secret_variables import *
-
-from bot_tasks import *
-
-from discord.ext.tasks import loop
-from discord import Activity, Client, Intents
-from datetime import datetime, time, timedelta, timezone
+from func_all import *
 
 
 # declare bot intents
 # all() enables everything, including the privileged intents: presences, members and message_content
-intents = Intents.all()
+intents = discord.Intents.all()
 
 # initialise client
-bot = Client(intents=intents)
-global_variables.BOT_INSTANCE = bot
+bot = discord.Client(intents=intents)
+var_global.BOT_INSTANCE = bot
 
 
 @loop(minutes=1)
@@ -32,8 +23,8 @@ async def task_display_weekly_quests():
 		return
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
-	await global_variables.QUEST_CHANNEL.send(greeting_msg)
-	await display_weekly_quests(global_variables.QUEST_CHANNEL)
+	await var_global.QUEST_CHANNEL.send(greeting_msg)
+	await display_weekly_quests(var_global.QUEST_CHANNEL)
 
 
 @bot.event
@@ -45,7 +36,7 @@ async def on_message(message):
 		return
 
 	# delete any user messages from the quest announcements channel to keep it clean
-	if message.channel.id == global_variables.QUEST_CHANNEL.id:
+	if message.channel.id == var_global.QUEST_CHANNEL.id:
 		await message.delete()
 		return
 
@@ -78,14 +69,14 @@ async def on_message(message):
 async def on_ready():
 	# on_ready() may be called more than once, typically whenever the bot momentarily loses connection to Discord 
 	# check if this is first time bot is calling on_ready()
-	if global_variables.QUEST_CHANNEL:
+	if var_global.QUEST_CHANNEL:
 		return
 
 	print(f"{bot.user} is online.\n")
 
 	# initialise global channel objects
-	global_variables.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
-	global_variables.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
+	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
+	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 
 	# start tasks
 	task_check_latest_news.start()
@@ -94,8 +85,8 @@ async def on_ready():
 	# set activity status
 	# available ActivityTypes: 0 is gaming (Playing), 1 is streaming (Streaming), 2 is listening (Listening to),
 	# 3 is watching (Watching), 4 is custom, 5 is competing (Competing in)
-	activity_status = Activity(type=2, name='Nata yapping away')
-	await global_variables.BOT_INSTANCE.change_presence(activity=activity_status)
+	activity_status = discord.Activity(type=2, name='Nata yapping away')
+	await var_global.BOT_INSTANCE.change_presence(activity=activity_status)
 
 
 # start bot

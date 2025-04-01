@@ -1,27 +1,28 @@
-import global_variables
-from global_variables import *
-
-import requests
-
-from io import BytesIO
-from datetime import datetime
-from discord import Embed, File
+from lib_imports import *
 
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 # Thus, obtain image data to pass into Discord directly
 def add_embed_image(image_url, embed_msg):
 	image_data = requests.get(image_url, headers=STANDARD_HEADERS).content
+	image_file = discord.File(io.BytesIO(image_data), filename="image.jpg")
 
-	image_file = File(BytesIO(image_data), filename="image.jpg")
 	embed_msg.set_image(url="attachment://image.jpg")
+	return embed_msg, image_file
 
+
+# returns a formatted embed message containing news details
+def create_news_embed(news_details):
+	embed_msg = discord.Embed(title=news_details['caption_jap'], url=news_details['article_link'], color=news_details['color_code'])
+	embed_msg.add_field(name=news_details['caption_eng'], value='')
+
+	embed_msg, image_file = add_embed_image(image_link, embed_msg)
 	return embed_msg, image_file
 
 
 # returns a formatted embed message containing quest details
 def create_quest_embed(quest_details):
-	embed_msg = Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=QUEST_COLOR_CODES[quest_details['color_index']])
+	embed_msg = discord.Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=quest_details['color_code'])
 	embed_msg.add_field(name='Description', value=quest_details['description'], inline=False)
 
 	embed_msg.add_field(name='Objective', value=quest_details['completion_conditions'], inline=True)

@@ -1,4 +1,4 @@
 __pycache__/
 
-python-scripts/secret_variables.py
+python-scripts/var_secret.py
 python-scripts/*.html

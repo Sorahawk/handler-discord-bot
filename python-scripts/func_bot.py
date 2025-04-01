@@ -1,14 +1,4 @@
-import global_variables
-from global_variables import *
-
-from embed_functions import *
-
-import requests
-
-from lxml import html
-from discord import Embed
-from datetime import datetime
-from googletrans import Translator
+from func_embed import *
 
 
 # checks for the latest news articles
@@ -20,45 +10,45 @@ async def check_latest_news():
 	latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
 
 	# set latest article
-	if not global_variables.LATEST_NEWS_IMAGE:
-		global_variables.LATEST_NEWS_IMAGE = latest_image_link
+	if not var_global.LATEST_NEWS_IMAGE:
+		var_global.LATEST_NEWS_IMAGE = latest_image_link
 
 	# new articles detected
-	elif latest_image_link != global_variables.LATEST_NEWS_IMAGE:
+	elif latest_image_link != var_global.LATEST_NEWS_IMAGE:
 		embed_list = []
-		translator = Translator()
+		translator = googletrans.Translator()
 
 		for article in news_list:
 			image_link = article.xpath('li/figure/img')[0].get('src')
 
 			# break iteration once latest registered article is matched
-			if image_link == global_variables.LATEST_NEWS_IMAGE:
+			if image_link == var_global.LATEST_NEWS_IMAGE:
 				break
 
-			article_link = article.get('href')
-			date = article.find_class('date')[0].text_content().strip()
+			details = {}
+
+			details['article_link'] = article.get('href')
+			details['date'] = article.find_class('date')[0].text_content().strip()
 
 			# extract specific category
 			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
-			category_name, category_color = NEWS_MAPPING[category_class]
+			details['category'], details['color_code'] = NEWS_MAPPING[category_class]
 
 			# translate Japanese text to English
-			jap_caption = article.find_class('text')[0].text_content().strip()
-			eng_caption = (await translator.translate(jap_caption, src='ja', dest='en')).text
+			caption_jap = article.find_class('text')[0].text_content().strip()
+			details['caption_jap'] = caption_jap
+			details['caption_eng'] = (await translator.translate(caption_jap, src='ja', dest='en')).text
 
 			# create Embed message
-			embed_msg = Embed(title=jap_caption, url=article_link, color=category_color)
-			embed_msg.add_field(name=eng_caption, value='\u200b')
-
-			embed_msg, image_file = add_embed_image(image_link, embed_msg)
+			embed_msg, image_file = create_news_embed(details)
 			embed_list.append((embed_msg, image_file, image_link))
 
 		# send embeds in correct order (earliest to latest)
 		for article_embed in embed_list[::-1]:
-			await global_variables.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
+			await var_global.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
 
 			# update tracking of latest article sent
-			global_variables.LATEST_NEWS_IMAGE = article_embed[-1]
+			var_global.LATEST_NEWS_IMAGE = article_embed[-1]
 
 
 # sends all quests within a specified week as embed messages
@@ -108,7 +98,7 @@ async def display_weekly_quests(channel, week_index=0):
 		for quest in quest_category.xpath('tbody/tr'):
 			details = {
 				'category_name': category_name,
-				'color_index': table_int
+				'color_code': QUEST_COLOR_CODES[table_int]
 			}
 
 			details['image_url'] = quest.xpath('td/img')[0].get('src')
@@ -123,7 +113,8 @@ async def display_weekly_quests(channel, week_index=0):
 
 			# strip any excess whitespace for the values above
 			for key, value in details.items():
-				details[key] = ' '.join(value.split())
+				if isinstance(value, str):
+					details[key] = ' '.join(value.split())
 
 			# retrieve details under 'Quest Info'
 			for entry in quest.find_class('overview')[0].xpath('ul/li'):
