@@ -60,4 +60,4 @@ else:
 	NONZERO_DATETIME_SYMBOL = '#'
 
 # URL string of the latest news image, used to identify each unique article
-LATEST_NEWS_IMAGE = None
+LATEST_NEWS_IMAGE = 'https://www.monsterhunter.com/ja/wp-content/uploads/sites/4/2025/03/250325_goods_prize.jpg'

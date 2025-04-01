@@ -25,7 +25,7 @@ async def check_latest_news():
 			if image_link == var_global.LATEST_NEWS_IMAGE:
 				break
 
-			details = {}
+			details = { 'image_link': image_link }
 
 			details['article_link'] = article.get('href')
 			details['date'] = article.find_class('date')[0].text_content().strip()

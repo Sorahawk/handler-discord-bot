@@ -16,7 +16,7 @@ def create_news_embed(news_details):
 	embed_msg = discord.Embed(title=news_details['caption_jap'], url=news_details['article_link'], color=news_details['color_code'])
 	embed_msg.add_field(name=news_details['caption_eng'], value='')
 
-	embed_msg, image_file = add_embed_image(image_link, embed_msg)
+	embed_msg, image_file = add_embed_image(news_details['image_link'], embed_msg)
 	return embed_msg, image_file
 
 
