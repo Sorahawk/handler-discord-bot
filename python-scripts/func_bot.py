@@ -71,7 +71,7 @@ async def display_weekly_quests(channel, week_index=0):
 
 	# format start and end dates
 	input_format = '%m.%d.%Y'
-	output_format = f'%{NONZERO_DATETIME_SYMBOL}d %B'
+	output_format = f'%{UNPADDED_SYMBOL}d %B'
 	start_date = datetime.strptime(dates[0], input_format).strftime(output_format)
 	end_date = datetime.strptime(dates[-1], input_format).strftime(output_format)
 

@@ -52,12 +52,12 @@ JAPANESE_NEWS_URL = 'https://www.monsterhunter.com/ja/news'
 # standard headers for HTTP requests
 STANDARD_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
 
-# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero padded items
+# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero-padded items
 # automatically switch between '#' for Windows and '-' for Linux
 if platform == 'linux':
-	NONZERO_DATETIME_SYMBOL = '-'
+	UNPADDED_SYMBOL = '-'
 else:
-	NONZERO_DATETIME_SYMBOL = '#'
+	UNPADDED_SYMBOL = '#'
 
 # URL string of the latest news image, used to identify each unique article
-LATEST_NEWS_IMAGE = 'https://www.monsterhunter.com/ja/wp-content/uploads/sites/4/2025/03/250325_goods_prize.jpg'
+LATEST_NEWS_IMAGE = None

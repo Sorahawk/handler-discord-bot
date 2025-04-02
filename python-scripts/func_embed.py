@@ -31,7 +31,7 @@ def create_quest_embed(quest_details):
 
 	# format dates
 	input_format = '%m.%d.%Y %H:%M'
-	output_format = f'%{NONZERO_DATETIME_SYMBOL}d %B, %I.%M %p'
+	output_format = f'%a, %{UNPADDED_SYMBOL}d %b, %{UNPADDED_SYMBOL}I:%M %p'
 	start_date = datetime.strptime(quest_details['start_date_and_time'], input_format).strftime(output_format)
 	end_date = datetime.strptime(quest_details['end_date_and_time'], input_format).strftime(output_format)
 
