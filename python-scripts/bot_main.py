@@ -10,7 +10,7 @@ bot = discord.Client(intents=intents)
 var_global.BOT_INSTANCE = bot
 
 
-@loop(minutes=1)
+@loop(hours=1)
 async def task_check_latest_news():
 	await check_latest_news()
 
