@@ -6,4 +6,10 @@
 DEBUG_MODE = False
 
 # (string) Discord Bot Token
-DISCORD_BOT_TOKEN = None
+DISCORD_BOT_TOKEN = ''
+
+# (string) DataImpulse username
+PROXY_USERNAME = ''
+
+# (string) DataImpulse password
+PROXY_PASSWORD = ''

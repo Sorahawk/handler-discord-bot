@@ -63,4 +63,4 @@ else:
 	UNPADDED_SYMBOL = '#'
 
 # URL string of the latest news image, used to identify each unique article
-LATEST_NEWS_IMAGE = None
+LATEST_NEWS_IMAGE = ''

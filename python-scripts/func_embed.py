@@ -3,8 +3,8 @@ from func_http import *
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 # Thus, obtain image data to pass into Discord directly
-def add_embed_image(image_url, embed_msg):
-	image_data = make_get_request(image_url).content
+def add_embed_image(image_url, embed_msg, use_proxy=False):
+	image_data = make_get_request(image_url, use_proxy).content
 	image_file = discord.File(io.BytesIO(image_data), filename="image.jpg")
 
 	embed_msg.set_image(url="attachment://image.jpg")
@@ -16,7 +16,7 @@ def create_news_embed(news_details):
 	embed_msg = discord.Embed(title=news_details['caption_jap'], url=news_details['article_link'], color=news_details['color_code'])
 	embed_msg.add_field(name=news_details['caption_eng'], value='')
 
-	embed_msg, image_file = add_embed_image(news_details['image_link'], embed_msg)
+	embed_msg, image_file = add_embed_image(news_details['image_link'], embed_msg, use_proxy=True)
 	return embed_msg, image_file
 
 

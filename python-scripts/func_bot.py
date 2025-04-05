@@ -3,7 +3,11 @@ from func_embed import *
 
 # checks for the latest news articles
 async def check_latest_news():
-	news_webpage = make_get_request(JAPANESE_NEWS_URL).text
+	# retrieve webpage contents via proxy
+	# `www` subdomain seems to be stricter than `info`
+	news_webpage = make_get_request(JAPANESE_NEWS_URL, use_proxy=True).text
+
+	# process HTML data
 	html_data = html.fromstring(news_webpage)
 	news_list = html_data.find_class('mhNews_list')[0]
 
@@ -54,7 +58,10 @@ async def check_latest_news():
 # sends all quests within a specified week as embed messages
 async def display_weekly_quests(channel, week_index=0):
 	try:
+		# retrieve webpage contents
 		events_webpage = make_get_request(EVENT_QUEST_URL).text
+
+		# process HTML data
 		html_data = html.fromstring(events_webpage)
 		date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
 
