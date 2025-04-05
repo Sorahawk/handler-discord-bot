@@ -43,6 +43,9 @@ NEWS_MAPPING = {
 	'cat_goods': ['Merchandise', 0xCF0707],
 }
 
+# proxy URL to route web traffic through
+PROXY_URL = 'http://gw.dataimpulse.com:823'
+
 # URL for Event Quests webpage
 EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'
 
