@@ -3,13 +3,19 @@ from func_embed import *
 
 # checks for the latest news articles
 async def check_latest_news():
-	# retrieve webpage contents via proxy
-	# `www` subdomain seems to be stricter than `info`
-	news_webpage = make_get_request(JAPANESE_NEWS_URL, use_proxy=True).text
+	try:
+		# retrieve webpage contents via proxy
+		# `www` subdomain seems to be stricter than `info`
+		news_webpage = make_get_request(JAPANESE_NEWS_URL, use_proxy=True).text
 
-	# process HTML data
-	html_data = html.fromstring(news_webpage)
-	news_list = html_data.find_class('mhNews_list')[0]
+		# process HTML data
+		html_data = html.fromstring(news_webpage)
+		news_list = html_data.find_class('mhNews_list')[0]
+
+	except Exception as e:
+		await var_global.NEWS_CHANNEL.send(f"ERROR in `check_latest_news`: {e}")
+		await var_global.NEWS_CHANNEL.send(f"```{news_webpage}```")
+		return
 
 	latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
 
@@ -66,8 +72,8 @@ async def display_weekly_quests(channel, week_index=0):
 		date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
 
 	except Exception as e:
-		await channel.send(f"ERROR: {e}")
-		await channel.send(f"Web Page Content: ```{events_webpage}```")
+		await channel.send(f"ERROR in `display_weekly_quests`: {e}")
+		await channel.send(f"```{events_webpage}```")
 		return
 
 	# get dates of specified week
