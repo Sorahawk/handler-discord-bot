@@ -35,10 +35,19 @@ async def check_latest_news():
 			if image_link == var_global.LATEST_NEWS_IMAGE:
 				break
 
-			details = { 'image_link': image_link }
+			details = {
+				'image_link': image_link,
+				'article_link': article.get('href')
+			}
 
-			details['article_link'] = article.get('href')
-			details['date'] = article.find_class('date')[0].text_content().strip()
+			# format date
+			date = article.find_class('date')[0].text_content().strip()
+			input_format = '%Y.%m.%d'
+			timestamp = datetime.strptime(date, input_format)
+
+			# insert current time to date timestamp
+			current_time = datetime.now()
+			details['timestamp'] = timestamp.replace(hour=current_time.hour, minute=current_time.minute)
 
 			# extract specific category
 			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
@@ -97,7 +106,7 @@ async def display_weekly_quests(channel, week_index=0):
 		return
 
 	# display message containing start and end dates of specified week
-	dates_msg = f"From **{start_date}** to **{end_date}**, the Guild has authorised the following hunts!\n\u200b"
+	dates_msg = f"From **{start_date}** to **{end_date}**, the Guild has authorised the following hunts!"
 	await channel.send(dates_msg)
 
 	# display quests
