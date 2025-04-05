@@ -86,7 +86,10 @@ async def on_ready():
 	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 
 	# start tasks
-	task_check_latest_news.start()
+
+	# TODO: fix fetching on VM
+	#task_check_latest_news.start()
+
 	task_display_weekly_quests.start()
 
 
