@@ -6,6 +6,7 @@ import io
 import random
 import discord
 import requests
+import subprocess
 import googletrans
 
 from lxml import html

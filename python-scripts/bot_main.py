@@ -100,6 +100,16 @@ async def on_message(message):
 
 		await display_weekly_quests(message.channel, week_index=week_index)
 
+	# update command
+	if contents[0] in ['update'] and sys.platform == 'linux':
+		await message.channel.send('Popping into the tent for a bit!')
+
+		# reset any changes that could have been made to the project folder and pull latest code
+		subprocess.run(f"cd {LINUX_ABSOLUTE_PATH} && git reset --hard HEAD && git pull", shell=True)
+
+		# restart service
+		subprocess.run(f"sudo systemctl restart {LINUX_SERVICE_NAME}", shell=True)
+
 
 # start bot
 bot.run(DISCORD_BOT_TOKEN)

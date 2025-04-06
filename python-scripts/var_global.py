@@ -1,4 +1,14 @@
-from sys import platform
+import sys
+
+
+### LINUX ###
+
+# absolute path to the project folder on the Linux cloud instance
+# cannot use os.getcwd() because systemd service runs the script from root directory
+LINUX_ABSOLUTE_PATH = '/home/ubuntu/handler-bot/python-scripts'
+
+# name of the bot service running on the Linux cloud instance
+LINUX_SERVICE_NAME = 'handler-bot.service'
 
 
 ### DISCORD ###
@@ -26,6 +36,28 @@ BOT_INSTANCE = None
 # symbol to signify bot commands
 BOT_COMMAND_PREFIX = '.'
 
+# proxy URL to route web traffic through
+PROXY_URL = 'http://gw.dataimpulse.com:823'
+
+# URL for Event Quests webpage
+EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'
+
+# URL for Japanese News webpage
+JAPANESE_NEWS_URL = 'https://www.monsterhunter.com/ja/news'
+
+# standard headers for HTTP requests
+STANDARD_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
+
+# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero-padded items
+# automatically switch between '#' for Windows and '-' for Linux
+if sys.platform == 'linux':
+	UNPADDED_SYMBOL = '-'
+else:
+	UNPADDED_SYMBOL = '#'
+
+# URL string of the latest news image, used to identify each unique article
+LATEST_NEWS_IMAGE = ''
+
 # color codes for Event Quest categories
 QUEST_COLOR_CODES = {
 	'1': 0x0492C2,  # blue
@@ -42,28 +74,6 @@ NEWS_MAPPING = {
 	'cat_campaign': ['Campaign', 0xD77417],
 	'cat_goods': ['Goods', 0xCF0707],
 }
-
-# proxy URL to route web traffic through
-PROXY_URL = 'http://gw.dataimpulse.com:823'
-
-# URL for Event Quests webpage
-EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'
-
-# URL for Japanese News webpage
-JAPANESE_NEWS_URL = 'https://www.monsterhunter.com/ja/news'
-
-# standard headers for HTTP requests
-STANDARD_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
-
-# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero-padded items
-# automatically switch between '#' for Windows and '-' for Linux
-if platform == 'linux':
-	UNPADDED_SYMBOL = '-'
-else:
-	UNPADDED_SYMBOL = '#'
-
-# URL string of the latest news image, used to identify each unique article
-LATEST_NEWS_IMAGE = ''
 
 
 # dictionary of the available Discord statuses for the bot
