@@ -79,4 +79,5 @@ BOT_ACTIVITY_STATUSES = {
 	"the Diva singing": 2,
 	"Nata yapping away": 2,
 	"the Wudwuds' shenanigans": 3,
+	"barrel bowling": 5,
 }
