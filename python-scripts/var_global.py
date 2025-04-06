@@ -64,3 +64,19 @@ else:
 
 # URL string of the latest news image, used to identify each unique article
 LATEST_NEWS_IMAGE = ''
+
+
+# dictionary of the available Discord statuses for the bot
+# if activity (key) is meant to be a 'Streaming' activity, then corresponding value is a string URL
+# otherwise corresponding value is the respective ActivityType
+
+# available ActivityTypes: 0 is gaming (Playing), 1 is streaming (Streaming), 2 is listening (Listening to),
+# 3 is watching (Watching), 4 is custom, 5 is competing (Competing in)
+BOT_ACTIVITY_STATUSES = {
+	"with Poogie": 0,
+	"with Palicoes": 0,
+	"with her Seikret": 0,
+	"the Diva singing": 2,
+	"Nata yapping away": 2,
+	"the Wudwuds' shenanigans": 3,
+}
