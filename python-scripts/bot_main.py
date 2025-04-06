@@ -101,7 +101,7 @@ async def on_message(message):
 		await display_weekly_quests(message.channel, week_index=week_index)
 
 	# update command
-	if contents[0] in ['update'] and sys.platform == 'linux':
+	elif contents[0] in ['update'] and sys.platform == 'linux':
 		await message.channel.send('Popping into the tent for a bit!')
 
 		# reset any changes that could have been made to the project folder and pull latest code
