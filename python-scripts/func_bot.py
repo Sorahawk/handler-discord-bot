@@ -1,73 +1,6 @@
 from func_embed import *
 
 
-# checks for the latest news articles
-async def check_latest_news():
-	try:
-		# retrieve webpage contents via proxy because `www` subdomain seems to be stricter than `info`
-		news_webpage = make_get_request(JAPANESE_NEWS_URL, use_proxy=True).text
-
-		# process HTML data
-		html_data = html.fromstring(news_webpage)
-		news_list = html_data.find_class('mhNews_list')[0]
-
-		latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
-
-		# set latest article
-		if not var_global.LATEST_NEWS_IMAGE:
-			var_global.LATEST_NEWS_IMAGE = latest_image_link
-
-		# new articles detected
-		elif latest_image_link != var_global.LATEST_NEWS_IMAGE:
-			embed_list = []
-			translator = googletrans.Translator()
-
-			for article in news_list:
-				image_link = article.xpath('li/figure/img')[0].get('src')
-
-				# break iteration once latest registered article is matched
-				if image_link == var_global.LATEST_NEWS_IMAGE:
-					break
-
-				details = {
-					'image_link': image_link,
-					'article_link': article.get('href')
-				}
-
-				# format date
-				date = article.find_class('date')[0].text_content().strip()
-				input_format = '%Y.%m.%d'
-				timestamp = datetime.strptime(date, input_format)
-
-				# insert current time to date timestamp
-				current_time = datetime.now()
-				details['timestamp'] = timestamp.replace(hour=current_time.hour, minute=current_time.minute)
-
-				# extract specific category
-				category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
-				details['category'], details['color_code'] = NEWS_MAPPING[category_class]
-
-				# translate Japanese text to English
-				caption_jap = article.find_class('text')[0].text_content().strip()
-				details['caption_jap'] = caption_jap
-				details['caption_eng'] = (await translator.translate(caption_jap, src='ja', dest='en')).text
-
-				# create Embed message
-				embed_msg, image_file = create_news_embed(details)
-				embed_list.append((embed_msg, image_file, image_link))
-
-			# send embeds in correct order (earliest to latest)
-			for article_embed in embed_list[::-1]:
-				await var_global.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
-
-				# update tracking of latest article sent
-				var_global.LATEST_NEWS_IMAGE = article_embed[-1]
-
-	except Exception as e:
-		await var_global.NEWS_CHANNEL.send(f"ERROR in `check_latest_news`: {e}")
-		await var_global.NEWS_CHANNEL.send(f"```{news_webpage}```")
-
-
 # sends all quests within a specified week as embed messages
 async def display_weekly_quests(channel, week_index=0, display_all=False):
 	try:
@@ -163,3 +96,70 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 	except Exception as e:
 		await channel.send(f"ERROR in `display_weekly_quests`: {e}")
 		await channel.send(f"```{events_webpage}```")
+
+
+# checks for the latest news articles
+async def check_latest_news():
+	try:
+		# retrieve webpage contents via proxy because `www` subdomain seems to be stricter than `info`
+		news_webpage = make_get_request(JAPANESE_NEWS_URL, use_proxy=True).text
+
+		# process HTML data
+		html_data = html.fromstring(news_webpage)
+		news_list = html_data.find_class('mhNews_list')[0]
+
+		latest_image_link = news_list[0].xpath('li/figure/img')[0].get('src')
+
+		# set latest article
+		if not var_global.LATEST_NEWS_IMAGE:
+			var_global.LATEST_NEWS_IMAGE = latest_image_link
+
+		# new articles detected
+		elif latest_image_link != var_global.LATEST_NEWS_IMAGE:
+			embed_list = []
+			translator = googletrans.Translator()
+
+			for article in news_list:
+				image_link = article.xpath('li/figure/img')[0].get('src')
+
+				# break iteration once latest registered article is matched
+				if image_link == var_global.LATEST_NEWS_IMAGE:
+					break
+
+				details = {
+					'image_link': image_link,
+					'article_link': article.get('href')
+				}
+
+				# format date
+				date = article.find_class('date')[0].text_content().strip()
+				input_format = '%Y.%m.%d'
+				timestamp = datetime.strptime(date, input_format)
+
+				# insert current time to date timestamp
+				current_time = datetime.now()
+				details['timestamp'] = timestamp.replace(hour=current_time.hour, minute=current_time.minute)
+
+				# extract specific category
+				category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
+				details['category'], details['color_code'] = NEWS_MAPPING[category_class]
+
+				# translate Japanese text to English
+				caption_jap = article.find_class('text')[0].text_content().strip()
+				details['caption_jap'] = caption_jap
+				details['caption_eng'] = (await translator.translate(caption_jap, src='ja', dest='en')).text
+
+				# create Embed message
+				embed_msg, image_file = create_news_embed(details)
+				embed_list.append((embed_msg, image_file, image_link))
+
+			# send embeds in correct order (earliest to latest)
+			for article_embed in embed_list[::-1]:
+				await var_global.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
+
+				# update tracking of latest article sent
+				var_global.LATEST_NEWS_IMAGE = article_embed[-1]
+
+	except Exception as e:
+		await var_global.NEWS_CHANNEL.send(f"ERROR in `check_latest_news`: {e}")
+		await var_global.NEWS_CHANNEL.send(f"```{news_webpage}```")
