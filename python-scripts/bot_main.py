@@ -41,7 +41,7 @@ async def task_display_weekly_quests():
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
 	await var_global.QUEST_CHANNEL.send(greeting_msg)
-	await display_weekly_quests(var_global.QUEST_CHANNEL)
+	await display_weekly_quests(var_global.QUEST_CHANNEL, display_all=True)
 
 
 @bot.event
