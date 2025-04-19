@@ -3,6 +3,7 @@ from var_global import *
 from var_secret import *
 
 import io
+import re
 import random
 import discord
 import requests

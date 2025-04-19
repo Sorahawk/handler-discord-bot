@@ -36,6 +36,13 @@ BOT_INSTANCE = None
 # symbol to signify bot commands
 BOT_COMMAND_PREFIX = '.'
 
+# list of bot commands
+BOT_COMMAND_LIST = ['quest', 'update']
+
+# dictionary of command flags
+# each flag can only be a single letter
+BOT_COMMAND_FLAGS = { 'all': 'a' }
+
 # proxy URL to route web traffic through
 PROXY_URL = 'http://gw.dataimpulse.com:823'
 

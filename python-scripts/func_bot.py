@@ -69,7 +69,7 @@ async def check_latest_news():
 
 
 # sends all quests within a specified week as embed messages
-async def display_weekly_quests(channel, week_index=0):
+async def display_weekly_quests(channel, week_index=0, display_all=False):
 	try:
 		# retrieve webpage contents
 		events_webpage = make_get_request(EVENT_QUEST_URL).text
@@ -111,6 +111,11 @@ async def display_weekly_quests(channel, week_index=0):
 			category_name = quest_table.find_class(f'tableTitle type{table_int}')[0].text_content().strip()[:-1]
 
 			for quest in quest_category.xpath('tbody/tr'):
+
+				# check if quest should be displayed
+				if not display_all and not quest.find_class('label_new'):
+					continue
+
 				details = {
 					'category_name': category_name,
 					'color_code': QUEST_COLOR_CODES[table_int]

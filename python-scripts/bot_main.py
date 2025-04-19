@@ -1,4 +1,4 @@
-from func_all import *
+from import_func import *
 
 
 # declare bot intents
@@ -80,35 +80,18 @@ async def on_message(message):
 	if message.content[:prefix_length] != BOT_COMMAND_PREFIX:
 		return
 
-	# process commands
-	contents = message.content[prefix_length:].lower().split()
+	# check for any valid command if the message starts with the prefix symbol
+	result = check_command(message.content[prefix_length:])
 
-	# quests command
-	if contents[0] in ['quest', 'quests']:
-		week_index = 0
+	if not result:
+		return
 
-		# handle optional parameter
-		if len(contents) > 1:
-			keyword = contents[1]
+	command_method, user_input = result[0], result[1]
 
-			if keyword == 'now':
-				week_index = 0
-			elif keyword == 'next':
-				week_index = 1
-			elif keyword == 'latest':
-				week_index = -1
-
-		await display_weekly_quests(message.channel, week_index=week_index)
-
-	# update command
-	elif contents[0] in ['update'] and sys.platform == 'linux':
-		await message.channel.send('Popping into the tent for a bit!')
-
-		# reset any changes that could have been made to the project folder and pull latest code
-		subprocess.run(f"cd {LINUX_ABSOLUTE_PATH} && git reset --hard HEAD && git pull", shell=True)
-
-		# restart service
-		subprocess.run(f"sudo systemctl restart {LINUX_SERVICE_NAME}", shell=True)
+	# check for presence of any command flags
+	# in the process also removes any excess whitespace
+	flag_presence, user_input = check_flags(user_input)
+	await eval(command_method)(message, user_input, flag_presence)
 
 
 # start bot
