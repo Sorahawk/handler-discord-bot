@@ -100,9 +100,9 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 
 		# display message containing start and end dates of specified week
 		if display_all:
-			dates_msg = f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!"
-		else:
 			dates_msg = f"From **{start_date}** to **{end_date}**, the Guild has authorised all of the following hunts!"
+		else:
+			dates_msg = f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!"
 		await channel.send(dates_msg)
 
 		# display quests
