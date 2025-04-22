@@ -7,3 +7,7 @@
     A Discord bot to keep players apprised on Monster Hunter Wilds news and events.
   </p>
 </div>
+
+---
+
+Copyright © 2025, [Sorahawk](https://github.com/Sorahawk)
