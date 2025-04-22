@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/Sorahawk/handler-discord-bot/">
-    <img src="images/alma.png" alt="Project Logo" width="400" height="400">
+    <img src="images/alma.png" alt="Project Logo" width="300" height="300">
   </a>
   <h3 align="center">Monster Hunter Wilds - Guild Handler Bot</h3>
   <p align="center">
