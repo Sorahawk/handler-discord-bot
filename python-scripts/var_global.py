@@ -63,7 +63,7 @@ else:
 	UNPADDED_SYMBOL = '#'
 
 # URL string of the latest news image, used to identify each unique article
-LATEST_NEWS_IMAGE = 'https://www.monsterhunter.com/ja/wp-content/uploads/sites/4/2025/04/250411_goods_japanexpo.jpg'
+LATEST_NEWS_IMAGE = ''
 
 # color codes for Event Quest categories
 QUEST_COLOR_CODES = {
