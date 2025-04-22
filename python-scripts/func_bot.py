@@ -116,16 +116,20 @@ async def check_latest_news():
 
 		# new articles detected
 		elif latest_image_link != var_global.LATEST_NEWS_IMAGE:
-			embed_list = []
+			article_list = []
 			translator = googletrans.Translator()
 
 			for article in news_list:
-				image_link = article.xpath('li/figure/img')[0].get('src')
-
 				# break iteration once latest registered article is matched
-				if image_link == var_global.LATEST_NEWS_IMAGE:
+				if article.xpath('li/figure/img')[0].get('src') == var_global.LATEST_NEWS_IMAGE:
 					break
 
+				# append article to list first, so that they can be flipped to be processed in the correct order
+				article_list.append(article)
+
+			# iterate through articles in correct order
+			for article in article_list[::-1]:
+				image_link = article.xpath('li/figure/img')[0].get('src')
 				details = {
 					'image_link': image_link,
 					'article_link': article.get('href')
@@ -151,14 +155,10 @@ async def check_latest_news():
 
 				# create Embed message
 				embed_msg, image_file = create_news_embed(details)
-				embed_list.append((embed_msg, image_file, image_link))
-
-			# send embeds in correct order (earliest to latest)
-			for article_embed in embed_list[::-1]:
-				await var_global.NEWS_CHANNEL.send(embed=article_embed[0], file=article_embed[1])
+				await var_global.NEWS_CHANNEL.send(embed=embed_msg, file=image_file)
 
 				# update tracking of latest article sent
-				var_global.LATEST_NEWS_IMAGE = article_embed[-1]
+				var_global.LATEST_NEWS_IMAGE = image_link
 
 	except Exception as e:
 		await var_global.NEWS_CHANNEL.send(f"ERROR in `check_latest_news`: {e}")
