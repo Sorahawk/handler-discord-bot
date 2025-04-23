@@ -49,7 +49,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 			for quest in quest_category.xpath('tbody/tr'):
 
 				# check if quest should be displayed
-				if not display_all and not (is_new := quest.find_class('label_new')):
+				if not (is_new := quest.find_class('label_new')) and not display_all:
 					continue
 
 				details = {
