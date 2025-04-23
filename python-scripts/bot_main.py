@@ -36,7 +36,7 @@ tz = timezone(timedelta(hours=8))  # UTC+8
 @loop(time=time(hour=8, minute=1, tzinfo=tz))
 async def task_display_weekly_quests():
 
-	if datetime.now(tz).weekday() != 2:  # only continue on Wednesdays
+	if datetime.now(tz).weekday() != 2:  # only execute on Wednesdays
 		return
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
@@ -82,7 +82,6 @@ async def on_message(message):
 
 	# check for any valid command if the message starts with the prefix symbol
 	result = check_command(message.content[prefix_length:])
-
 	if not result:
 		return
 

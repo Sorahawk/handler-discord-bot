@@ -12,9 +12,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 		date_ranges = html_data.get_element_by_id('tab_top').getparent().find_class('tab1')[0].xpath('li/p')
 
 		# get dates of specified week
-		specified_range = date_ranges[week_index]
-
-		specified_range.xpath('span')[0].drop_tree()  # drop the span elements to ignore the 'This/next week' text
+		(specified_range := date_ranges[week_index]).xpath('span')[0].drop_tree()  # drop the span elements to ignore the 'This/next week' text
 		dates = specified_range.text_content().strip().split()
 
 		# format start and end dates
@@ -33,10 +31,9 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 
 		# display message containing start and end dates of specified week
 		if display_all:
-			dates_msg = f"From **{start_date}** to **{end_date}**, the Guild has authorised all of the following hunts!"
+			await channel.send(f"From **{start_date}** to **{end_date}**, the Guild has authorised all of the following hunts!")
 		else:
-			dates_msg = f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!"
-		await channel.send(dates_msg)
+			await channel.send(f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!")
 
 		# display quests
 		for quest_category in quest_table.xpath('table'):
@@ -134,6 +131,7 @@ async def check_latest_news():
 			# iterate through articles in correct order
 			for article in article_list[::-1]:
 				image_link = article.xpath('li/figure/img')[0].get('src')
+
 				details = {
 					'image_link': image_link,
 					'article_link': article.get('href')
