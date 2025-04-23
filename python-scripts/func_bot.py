@@ -63,7 +63,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 
 				# append [NEW] label if quest is new
 				if is_new:
-					details[title] += ' [NEW]'
+					details['title'] += ' [NEW]'
 
 				# insert '\n' to any <br> tags within the description text element
 				description = quest.find_class('txt')[0]
