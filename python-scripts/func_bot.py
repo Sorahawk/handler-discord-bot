@@ -49,7 +49,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 			for quest in quest_category.xpath('tbody/tr'):
 
 				# check if quest should be displayed
-				if not display_all and not quest.find_class('label_new'):
+				if not display_all and not (is_new := quest.find_class('label_new')):
 					continue
 
 				details = {
@@ -60,6 +60,10 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 				details['image_url'] = quest.xpath('td/img')[0].get('src')
 				details['difficulty'] = quest.find_class('level')[0].text_content()
 				details['title'] = quest.find_class('title')[0].xpath('span')[0].text_content()
+
+				# append [NEW] label if quest is new
+				if is_new:
+					details[title] += ' [NEW]'
 
 				# insert '\n' to any <br> tags within the description text element
 				description = quest.find_class('txt')[0]

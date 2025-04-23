@@ -66,11 +66,15 @@ else:
 LATEST_NEWS_IMAGE = ''
 
 # color codes for Event Quest categories
+# 1: Siege
+# 2: Event
+# 3: Challenge
+# 4: Free Challenge
 QUEST_COLOR_CODES = {
 	'1': 0x0492C2,  # blue
 	'2': 0xD8B863,  # yellow
-	'3': 0xDE3163,  # red
-	'4': 0x5DBB63,  # green
+	'3': 0x5DBB63,  # green
+	'4': 0xDE3163,  # red
 }
 
 # names and color codes for News categories
