@@ -16,24 +16,24 @@ LINUX_SERVICE_NAME = 'handler-bot.service'
 
 BOT_INSTANCE = None
 
-INFO_CHANNEL = None
+QUEST_CHANNEL = None
 
 NEWS_CHANNEL = None
 
-QUEST_CHANNEL = None
+INFO_CHANNEL = None
 
 
 
 ### DISCORD ###
 
-# ID of Discord server channel to send Wilds info notifications
-INFO_CHANNEL_ID = 1365653663238066207
+# ID of Discord server channel to send event quest notifications
+QUEST_CHANNEL_ID = 1349006234375950337
 
 # ID of Discord server channel to send news notifications
 NEWS_CHANNEL_ID = 1356173681369415871
 
-# ID of Discord server channel to send event quest notifications
-QUEST_CHANNEL_ID = 1349006234375950337
+# ID of Discord server channel to send Wilds info notifications
+INFO_CHANNEL_ID = 1365653663238066207
 
 # Discord server role name to ping for notifications
 NOTIFY_ROLE_NAME = '<@&1097703521886941274>'
@@ -87,23 +87,23 @@ STANDARD_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' }
 
 
 
-### INFO ###
+### QUEST ###
 
-# URL for Wilds main webpage
-WILDS_MAIN_URL = 'https://www.monsterhunter.com/wilds/en-asia'
-
-# URL for Wilds patch notes webpage
-WILDS_PATCHNOTES_URL = 'https://info.monsterhunter.com/wilds/update/en-asia'
-
-# URL for Wilds support articles webpage
-WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
+# URL for Event Quests webpage
+EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'
 
 
-# URL string of the latest Wilds news image, used to bookmark the latest article
-LATEST_WILDS_IMAGE = ''
-
-# list to store the current important notices on Wilds main page
-WILDS_NOTICE_LIST = []
+# color codes for Event Quest categories
+# 1: Siege
+# 2: Event
+# 3: Challenge
+# 4: Free Challenge
+QUEST_COLOR_CODES = {
+	'1': 0x0492C2,  # blue
+	'2': 0xD8B863,  # yellow
+	'3': 0x5DBB63,  # green
+	'4': 0xDE3163,  # red
+}
 
 
 
@@ -127,20 +127,20 @@ NEWS_MAPPING = {
 
 
 
-### QUEST ###
+### INFO ###
 
-# URL for Event Quests webpage
-EVENT_QUEST_URL = 'https://info.monsterhunter.com/wilds/event-quest/en-asia/game/schedule'
+# URL for Wilds main webpage
+WILDS_MAIN_URL = 'https://www.monsterhunter.com/wilds/en-asia'
+
+# URL for Wilds patch notes webpage
+WILDS_PATCHNOTES_URL = 'https://info.monsterhunter.com/wilds/update/en-asia'
+
+# URL for Wilds support articles webpage
+WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
 
 
-# color codes for Event Quest categories
-# 1: Siege
-# 2: Event
-# 3: Challenge
-# 4: Free Challenge
-QUEST_COLOR_CODES = {
-	'1': 0x0492C2,  # blue
-	'2': 0xD8B863,  # yellow
-	'3': 0x5DBB63,  # green
-	'4': 0xDE3163,  # red
-}
+# URL string of the latest Wilds news image, used to bookmark the latest article
+LATEST_WILDS_IMAGE = ''
+
+# list to store the current 'Important Notices' on Wilds main page
+WILDS_NOTICE_LIST = []
