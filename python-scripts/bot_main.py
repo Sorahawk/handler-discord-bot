@@ -29,6 +29,12 @@ async def task_check_latest_news():
 	await check_latest_news()
 
 
+# poll for Wilds info every hour
+@loop(hours=1)
+async def task_check_wilds_info():
+	await check_wilds_info()
+
+
 # execute weekly quest update weekly every Wednesday at 8.01am SGT
 # Discord seems to execute the task a few seconds before the minute actually occurs.
 # in this case, also give the website a minute to update to the next week
@@ -60,6 +66,7 @@ async def on_ready():
 
 	# start tasks
 	task_rotate_status.start()
+	task_check_wilds_info.start()
 	task_check_latest_news.start()
 	task_display_weekly_quests.start()
 

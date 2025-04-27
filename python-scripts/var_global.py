@@ -16,7 +16,7 @@ LINUX_SERVICE_NAME = 'handler-bot.service'
 # ID of Discord server channel to send news notifications
 NEWS_CHANNEL_ID = 1356173681369415871
 
-# ID of Discord server channel to send info notifications
+# ID of Discord server channel to send Wilds info notifications
 INFO_CHANNEL_ID = 1365653663238066207
 
 # ID of Discord server channel to send event quest notifications

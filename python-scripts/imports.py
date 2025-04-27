@@ -16,8 +16,10 @@ from var_global import *
 from var_secret import *
 
 from func_http import *
+from func_info import *
+from func_news import *
 from func_embed import *
+from func_quest import *
 from func_message import *
 
-from bot_tasks import *
 from bot_methods import *
