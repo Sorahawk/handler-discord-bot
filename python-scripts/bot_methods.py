@@ -1,4 +1,4 @@
-from import_hub import *
+from imports import *
 
 
 # all bot methods below have to correspond to an item in BOT_COMMAND_LIST

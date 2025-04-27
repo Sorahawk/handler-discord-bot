@@ -1,4 +1,4 @@
-from import_hub import *
+from imports import *
 
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website

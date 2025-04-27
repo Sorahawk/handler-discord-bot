@@ -1,4 +1,4 @@
-from import_hub import *
+from imports import *
 
 
 # declare bot intents
@@ -29,9 +29,9 @@ async def task_check_latest_news():
 	await check_latest_news()
 
 
-# Execute weekly quest update weekly every Wednesday at 8.01am SGT
+# execute weekly quest update weekly every Wednesday at 8.01am SGT
 # Discord seems to execute the task a few seconds before the minute actually occurs.
-# In this case, also give the website a minute to update to the next week
+# in this case, also give the website a minute to update to the next week
 tz = timezone(timedelta(hours=8))  # UTC+8
 @loop(time=time(hour=8, minute=1, tzinfo=tz))
 async def task_display_weekly_quests():

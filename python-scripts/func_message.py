@@ -1,4 +1,4 @@
-from import_hub import *
+from imports import *
 
 
 # determines if user input contains any command
