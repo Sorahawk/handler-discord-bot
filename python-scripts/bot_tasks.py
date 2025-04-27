@@ -1,4 +1,4 @@
-from func_embed import *
+from import_hub import *
 
 
 # sends all quests within a specified week as embed messages

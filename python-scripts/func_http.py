@@ -1,4 +1,4 @@
-from import_lib import *
+from import_hub import *
 
 
 def make_get_request(url, use_proxy=False):

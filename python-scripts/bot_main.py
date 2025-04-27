@@ -1,4 +1,4 @@
-from import_func import *
+from import_hub import *
 
 
 # declare bot intents
@@ -54,8 +54,9 @@ async def on_ready():
 	print(f"{bot.user} is online.\n")
 
 	# initialise global channel objects
-	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
 	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
+	var_global.INFO_CHANNEL = bot.get_channel(INFO_CHANNEL_ID)
+	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
 
 	# start tasks
 	task_rotate_status.start()
