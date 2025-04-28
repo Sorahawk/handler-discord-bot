@@ -129,6 +129,7 @@ NEWS_MAPPING = {
 
 ### INFO ###
 
+
 # URL for Wilds main webpage
 WILDS_MAIN_URL = 'https://www.monsterhunter.com/wilds/en-asia'
 

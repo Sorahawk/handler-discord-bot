@@ -6,7 +6,8 @@ import requests
 import subprocess
 import googletrans
 
-from lxml import html
+from lxml import html  # the alternative is `import lxml.html`
+from urllib.parse import urljoin
 from discord.ext.tasks import loop
 from datetime import datetime, time, timedelta, timezone
 

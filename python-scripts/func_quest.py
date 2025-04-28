@@ -63,8 +63,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 					details['title'] += ' [NEW]'
 
 				# insert '\n' to any <br> tags within the description text element
-				description = quest.find_class('txt')[0]
-				for br in description.xpath('br'):
+				for br in (description := quest.find_class('txt')[0]).xpath('br'):
 					br.text = '\n'
 				details['description'] = description.text_content()
 
