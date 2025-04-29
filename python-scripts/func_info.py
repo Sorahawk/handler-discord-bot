@@ -4,23 +4,24 @@ from imports import *
 # checks for the latest info on Wilds
 async def check_wilds_info():
 	try:
-		await process_wilds_main()
-
-	except Exception as e:
-		await var_global.INFO_CHANNEL.send(f"ERROR in `check_wilds_info`: {e}")
-
-
-# processes 'News' and 'Important Notice' sections of Wilds main page
-async def process_wilds_main():
-	try:
 		# retrieve webpage contents
 		main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
 
 		# process HTML data
-		html_data = html.fromstring(main_webpage)
-		news_list = html_data.find_class('news-container')[0].find_class('news-item')
+		main_page_html = html.fromstring(main_webpage)
+		await process_wilds_news(main_page_html)
+		await process_wilds_notice(main_page_html)
 
+	except Exception as e:
+		await var_global.INFO_CHANNEL.send(f"ERROR in `check_wilds_info`: {e}")
+		await var_global.INFO_CHANNEL.send(f"```{main_webpage}```")
+
+
+# processes 'News' section of Wilds main page
+async def process_wilds_news(html_data):
+	try:
 		# check for Wilds news
+		news_list = html_data.find_class('news-container')[0].find_class('news-item')
 		item_list = []
 
 		for item in news_list:
@@ -57,7 +58,13 @@ async def process_wilds_main():
 			# update tracking of latest article sent
 			var_global.LATEST_WILDS_IMAGE = details['image_link']
 
+	except Exception as e:
+		await var_global.INFO_CHANNEL.send(f"ERROR in `process_wilds_news`: {e}")
 
+
+# processes 'Important Notice' section of Wilds main page
+async def process_wilds_notice(html_data):
+	try:
 
 		# obtain notice list, but account for the possibility that they might remove the list entirely
 		notice_list = html_data.find_class('ImportantNotice_list')
@@ -68,6 +75,7 @@ async def process_wilds_main():
 			# worth a look if it actually happens
 			return
 
+
+
 	except Exception as e:
-		await var_global.INFO_CHANNEL.send(f"ERROR in `process_wilds_main`: {e}")
-		await var_global.INFO_CHANNEL.send(f"```{main_webpage}```")
+		await var_global.INFO_CHANNEL.send(f"ERROR in `process_wilds_notice`: {e}")
