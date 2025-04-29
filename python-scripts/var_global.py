@@ -139,7 +139,6 @@ WILDS_PATCHNOTES_URL = 'https://info.monsterhunter.com/wilds/update/en-asia'
 # URL for Wilds support articles webpage
 WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
 
-
 # URL string of the latest Wilds news image, used to bookmark the latest article
 LATEST_WILDS_IMAGE = ''
 
