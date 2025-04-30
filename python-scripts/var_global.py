@@ -129,7 +129,6 @@ NEWS_MAPPING = {
 
 ### INFO ###
 
-
 # URL for Wilds main webpage
 WILDS_MAIN_URL = 'https://www.monsterhunter.com/wilds/en-asia'
 
@@ -144,3 +143,12 @@ LATEST_WILDS_IMAGE = ''
 
 # list to store the current 'Important Notices' on Wilds main page
 WILDS_NOTICE_LIST = []
+
+
+# names and color codes for Info categories
+INFO_MAPPING = {
+	'news': ['Game News', 0xD8B863],  # yellow
+	'update': ['Update Information', 0x0492C2],  # blue
+	'notice': ['Important Notice', 0xDE3163],  # red
+	'support': ['Support Article', 0x5DBB63],  # green
+}

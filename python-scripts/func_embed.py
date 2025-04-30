@@ -34,24 +34,10 @@ def create_quest_embed(quest_details):
 	return embed_msg, image_file
 
 
-# returns a formatted embed message containing news details
-def create_news_embed(news_details):
-	title = f"News ({news_details['category']})"
-	description = f"[{news_details['caption_eng']}]({news_details['article_link']})"
+# returns a formatted embed message containing news and info details
+def create_news_embed(details):
+	embed_msg = discord.Embed(title=details['title'], url=details['title_link'], description=details['description'], color=details['color_code'])
+	embed_msg.set_footer(text=details['date'])
 
-	embed_msg = discord.Embed(title=title, url=JAPANESE_NEWS_URL, description=description, color=news_details['color_code'])
-	embed_msg.set_footer(text=news_details['date'])
-
-	embed_msg, image_file = add_embed_image(news_details['image_link'], embed_msg, use_proxy=True)
-	return embed_msg, image_file
-
-
-# returns a formatted embed message containing Wilds info details
-def create_info_embed(info_details, title, homepage_url):
-	description = f"[{info_details['caption']}]({info_details['article_link']})"
-
-	embed_msg = discord.Embed(title=title, url=homepage_url, description=description)
-	embed_msg.set_footer(text=info_details['date'])
-
-	embed_msg, image_file = add_embed_image(info_details['image_link'], embed_msg, use_proxy=True)
+	embed_msg, image_file = add_embed_image(details['image_link'], embed_msg, use_proxy=True)
 	return embed_msg, image_file

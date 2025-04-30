@@ -28,23 +28,26 @@ async def check_latest_news():
 				break
 
 			details = {
-				'image_link': image_link,
-				'article_link': article.get('href')
+				'title_link': JAPANESE_NEWS_URL,
+				'image_link': image_link
 			}
+
+			# set title and color code
+			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
+			category, details['color_code'] = NEWS_MAPPING[category_class]
+			details['title'] = f"News ({category})"
+
+			# set description
+			caption_jap = article.find_class('text')[0].text_content().strip()
+			caption = (await translator.translate(caption_jap, src='ja', dest='en')).text
+			article_link = article.get('href')
+			details['description'] = f"[{caption}]({article_link})"
 
 			# format date
 			date = article.find_class('date')[0].text_content().strip()
 			input_format = '%Y.%m.%d'
 			output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
 			details['date'] = datetime.strptime(date, input_format).strftime(output_format)
-
-			# extract specific category
-			category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
-			details['category'], details['color_code'] = NEWS_MAPPING[category_class]
-
-			# translate Japanese text to English
-			details['caption_jap'] = (caption_jap := article.find_class('text')[0].text_content().strip())
-			details['caption_eng'] = (await translator.translate(caption_jap, src='ja', dest='en')).text
 
 			article_list.append(details)
 
