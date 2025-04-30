@@ -37,7 +37,6 @@ async def process_wilds_news(html_data):
 				break
 
 			details = {
-				'title': 'News',
 				'title_link': WILDS_MAIN_URL,
 				'image_link': image_link
 			}
