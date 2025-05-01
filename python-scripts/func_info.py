@@ -33,7 +33,7 @@ async def process_wilds_news(main_webpage):
 			# set latest news image on fresh startup
 			if not var_global.LATEST_WILDS_IMAGE:
 				var_global.LATEST_WILDS_IMAGE = image_link
-				break
+				return []
 
 			# break iteration once latest news image is matched
 			elif image_link == var_global.LATEST_WILDS_IMAGE:
@@ -96,7 +96,7 @@ async def process_wilds_notice(main_webpage):
 			# set latest notice identifier on fresh startup
 			if not var_global.LATEST_WILDS_NOTICE:
 				var_global.LATEST_WILDS_NOTICE = notice_identifier
-				break
+				return []
 
 			# break iteration once latest notice is matched
 			elif notice_identifier == var_global.LATEST_WILDS_NOTICE:
