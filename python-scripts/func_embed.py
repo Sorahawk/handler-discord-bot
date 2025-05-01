@@ -12,7 +12,7 @@ def add_embed_image(image_url, embed_msg, use_proxy=False):
 
 
 # returns a formatted embed message containing quest details
-def create_quest_embed(quest_details):
+async def send_quest_embed(quest_details, channel):
 	embed_msg = discord.Embed(title=quest_details['title'], url=EVENT_QUEST_URL, color=quest_details['color_code'])
 	embed_msg.add_field(name='Description', value=quest_details['description'], inline=False)
 
@@ -31,13 +31,18 @@ def create_quest_embed(quest_details):
 	embed_msg.add_field(name='End', value=end_date, inline=True)
 
 	embed_msg, image_file = add_embed_image(quest_details['image_url'], embed_msg)
-	return embed_msg, image_file
+	await channel.send(embed=embed_msg, file=image_file)
 
 
 # returns a formatted embed message containing news and info details
-def create_news_embed(details):
+async def send_news_embed(details, channel):
 	embed_msg = discord.Embed(title=details['title'], url=details['title_link'], description=details['description'], color=details['color_code'])
-	embed_msg.set_footer(text=details['date'])
 
-	embed_msg, image_file = add_embed_image(details['image_link'], embed_msg, use_proxy=True)
-	return embed_msg, image_file
+	output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
+	embed_msg.set_footer(text=details['date'].strftime(output_format))
+
+	if 'image_link' in details:
+		embed_msg, image_file = add_embed_image(details['image_link'], embed_msg, use_proxy=True)
+		await channel.send(embed=embed_msg, file=image_file)
+	else:
+		await channel.send(embed=embed_msg)

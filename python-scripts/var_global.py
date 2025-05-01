@@ -133,7 +133,7 @@ NEWS_MAPPING = {
 WILDS_MAIN_URL = 'https://www.monsterhunter.com/wilds/en-asia'
 
 # URL for Wilds patch notes webpage
-WILDS_PATCHNOTES_URL = 'https://info.monsterhunter.com/wilds/update/en-asia'
+WILDS_UPDATE_URL = 'https://info.monsterhunter.com/wilds/update/en-asia'
 
 # URL for Wilds support articles webpage
 WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
@@ -141,8 +141,8 @@ WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/c
 # URL string of the latest Wilds news image, used to bookmark the latest article
 LATEST_WILDS_IMAGE = ''
 
-# list to store the current 'Important Notices' on Wilds main page
-WILDS_NOTICE_LIST = []
+# string to store the latest 'Important Notice' on Wilds main page; format is "<DATE> <CAPTION>"
+LATEST_WILDS_NOTICE = ''
 
 
 # names and color codes for Info categories

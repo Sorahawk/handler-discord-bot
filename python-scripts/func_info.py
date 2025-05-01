@@ -3,31 +3,34 @@ from imports import *
 
 # checks for the latest info on Wilds
 async def check_wilds_info():
-	try:
-		# retrieve webpage contents
-		main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
+	# retrieve webpage contents
+	main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
+	
+	details_list = []
+	details_list += await process_wilds_news(main_webpage)
+	details_list += await process_wilds_notice(main_webpage)
 
-		# process HTML data
-		main_page_html = html.fromstring(main_webpage)
-		await process_wilds_news(main_page_html)
-		await process_wilds_notice(main_page_html)
+	# TODO: sort details_list
 
-	except Exception as e:
-		await var_global.INFO_CHANNEL.send(f"ERROR in `check_wilds_info`: {e}")
-		await var_global.INFO_CHANNEL.send(f"```{main_webpage}```")
+	# iterate through new items, in correct order
+	for details in details_list:
+		await send_news_embed(details, var_global.INFO_CHANNEL)
 
 
 # processes 'News' section of Wilds main page
-async def process_wilds_news(html_data):
+async def process_wilds_news(main_webpage):
 	try:
+		# process HTML data
+		html_data = html.fromstring(main_webpage)
+
 		# check for Wilds news
 		news_list = html_data.find_class('news-container')[0].find_class('news-item')
-		item_list = []
+		details_list = []
 
 		for item in news_list:
 			image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 
-			# set latest news image on first iteration
+			# set latest news image on fresh startup
 			if not var_global.LATEST_WILDS_IMAGE:
 				var_global.LATEST_WILDS_IMAGE = image_link
 				break
@@ -52,34 +55,74 @@ async def process_wilds_news(html_data):
 			# format date
 			date = item.find_class('news-item__ymd')[0].text_content().strip()
 			input_format = '%Y.%m.%d'
-			output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
-			details['date'] = datetime.strptime(date, input_format).strftime(output_format)
+			details['date'] = datetime.strptime(date, input_format)
 
-			item_list.append(details)
+			details_list.append(details)
 
-		# iterate through new items, in correct order
-		for details in item_list[::-1]:
-			embed_msg, image_file = create_news_embed(details)
-			await var_global.INFO_CHANNEL.send(embed=embed_msg, file=image_file)
-
-			# update tracking of latest article sent
-			var_global.LATEST_WILDS_IMAGE = details['image_link']
+		var_global.LATEST_WILDS_IMAGE = details_list[0]['image_link']
+		return details_list
 
 	except Exception as e:
 		await var_global.INFO_CHANNEL.send(f"ERROR in `process_wilds_news`: {e}")
+		await var_global.NEWS_CHANNEL.send(f"```{main_webpage}```")
 
 
 # processes 'Important Notice' section of Wilds main page
-async def process_wilds_notice(html_data):
+async def process_wilds_notice(main_webpage):
 	try:
+		# process HTML data
+		html_data = html.fromstring(main_webpage)
 
-		# obtain notice list, but account for the possibility that they might remove the list entirely
-		notice_list = html_data.find_class('ImportantNotice_list')
+		# obtain notice list
+		notice_block = html_data.get_element_by_id('ImportantNotice', None)
 
 		# skip if 'Important Notice' section is missing
-		if not notice_list:
+		if notice_block is None:
+			var_global.LATEST_WILDS_NOTICE = []
 			await var_global.INFO_CHANNEL.send('Important Notice section is not present on Wilds webpage.')
 			return
 
+		# consolidate current notice list
+		notice_list = notice_block.find_class('ImportantNotice_list')[0].xpath('li/a')
+		details_list = []
+
+		for item in notice_list:
+
+			# construct identifier string to 'mark' latest notice
+			date = item.xpath('dl/dt')[0].text_content().strip()
+			caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
+			notice_identifier = f"{date} {caption}"
+
+			# set latest notice identifier on fresh startup
+			if not var_global.LATEST_WILDS_NOTICE:
+				var_global.LATEST_WILDS_NOTICE = notice_identifier
+				break
+
+			# break iteration once latest notice is matched
+			elif notice_identifier == var_global.LATEST_WILDS_NOTICE:
+				break
+
+			details = {
+				'title_link': WILDS_MAIN_URL,
+				'notice_identifier': notice_identifier
+			}
+
+			# set title and color code
+			details['title'], details['color_code'] = INFO_MAPPING['notice']
+
+			# set description
+			article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
+			details['description'] = f"[{caption}]({article_link})"
+
+			# format date
+			input_format = '%B %d, %Y'
+			details['date'] = datetime.strptime(date, input_format)
+
+			details_list.append(details)
+
+		var_global.LATEST_WILDS_NOTICE = details_list[0]['notice_identifier']
+		return details_list
+
 	except Exception as e:
 		await var_global.INFO_CHANNEL.send(f"ERROR in `process_wilds_notice`: {e}")
+		await var_global.NEWS_CHANNEL.send(f"```{main_webpage}```")

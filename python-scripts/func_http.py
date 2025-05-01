@@ -14,4 +14,6 @@ def make_get_request(url, use_proxy=False):
 			'https': proxy_auth_url
 		}
 
-		return requests.get(url, headers=STANDARD_HEADERS, proxies=proxies)
+		response = requests.get(url, headers=STANDARD_HEADERS, proxies=proxies)
+		response.encoding = 'utf-8'
+		return response

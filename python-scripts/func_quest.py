@@ -89,8 +89,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 
 					details[key] = value
 
-				embed_msg, image = create_quest_embed(details)
-				await channel.send(embed=embed_msg, file=image)
+				await send_quest_embed(details, channel)
 
 	except Exception as e:
 		await channel.send(f"ERROR in `display_weekly_quests`: {e}")

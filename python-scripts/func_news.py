@@ -12,13 +12,13 @@ async def check_latest_news():
 		news_list = html_data.find_class('mhNews_list')[0]
 
 		# check for new articles
-		article_list = []
+		details_list = []
 		translator = googletrans.Translator()
 
 		for article in news_list:
 			image_link = article.xpath('li/figure/img')[0].get('src')
 
-			# set latest article image on first iteration
+			# set latest article image on fresh startup
 			if not var_global.LATEST_NEWS_IMAGE:
 				var_global.LATEST_NEWS_IMAGE = image_link
 				return
@@ -46,15 +46,13 @@ async def check_latest_news():
 			# format date
 			date = article.find_class('date')[0].text_content().strip()
 			input_format = '%Y.%m.%d'
-			output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
-			details['date'] = datetime.strptime(date, input_format).strftime(output_format)
+			details['date'] = datetime.strptime(date, input_format)
 
-			article_list.append(details)
+			details_list.append(details)
 
 		# iterate through new articles, in correct order
-		for details in article_list[::-1]:
-			embed_msg, image_file = create_news_embed(details)
-			await var_global.NEWS_CHANNEL.send(embed=embed_msg, file=image_file)
+		for details in details_list[::-1]:
+			await create_news_embed(details, var_global.NEWS_CHANNEL)
 
 			# update tracking of latest article sent
 			var_global.LATEST_NEWS_IMAGE = details['image_link']
