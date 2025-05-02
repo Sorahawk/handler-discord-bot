@@ -35,7 +35,7 @@ async def process_wilds_news(main_webpage):
 			# set latest news image on fresh startup
 			if not var_global.LATEST_WILDS_IMAGE:
 				var_global.LATEST_WILDS_IMAGE = image_link
-				return []
+				break
 
 			# break iteration once latest news image is matched
 			elif image_link == var_global.LATEST_WILDS_IMAGE:
@@ -61,7 +61,10 @@ async def process_wilds_news(main_webpage):
 
 			details_list.append(details)
 
-		var_global.LATEST_WILDS_IMAGE = details_list[0]['image_link']
+		# update tracking if new item appeared
+		if details_list:
+			var_global.LATEST_WILDS_IMAGE = details_list[0]['image_link']
+
 		return details_list
 
 	except Exception as e:
@@ -75,16 +78,16 @@ async def process_wilds_notice(main_webpage):
 		# process HTML data
 		html_data = html.fromstring(main_webpage)
 
-		# obtain notice list
+		# extract 'Important Notice' section
 		notice_block = html_data.get_element_by_id('ImportantNotice', None)
 
-		# skip if 'Important Notice' section is missing
+		# skip if 'Important Notice' section is not present on webpage
 		if notice_block is None:
 			var_global.LATEST_WILDS_NOTICE = []
 			await var_global.INFO_CHANNEL.send('Important Notice section is not present on Wilds webpage.')
 			return
 
-		# consolidate current notice list
+		# consolidate current notices
 		notice_list = notice_block.find_class('ImportantNotice_list')[0].xpath('li/a')
 		details_list = []
 
@@ -98,7 +101,7 @@ async def process_wilds_notice(main_webpage):
 			# set latest notice identifier on fresh startup
 			if not var_global.LATEST_WILDS_NOTICE:
 				var_global.LATEST_WILDS_NOTICE = notice_identifier
-				return []
+				break
 
 			# break iteration once latest notice is matched
 			elif notice_identifier == var_global.LATEST_WILDS_NOTICE:
@@ -122,7 +125,10 @@ async def process_wilds_notice(main_webpage):
 
 			details_list.append(details)
 
-		var_global.LATEST_WILDS_NOTICE = details_list[0]['notice_identifier']
+		# update tracking if new item appeared
+		if details_list:
+			var_global.LATEST_WILDS_NOTICE = details_list[0]['notice_identifier']
+
 		return details_list
 
 	except Exception as e:

@@ -52,7 +52,7 @@ async def check_latest_news():
 
 		# iterate through new articles, in correct order
 		for details in details_list[::-1]:
-			await create_news_embed(details, var_global.NEWS_CHANNEL)
+			await send_news_embed(details, var_global.NEWS_CHANNEL)
 
 			# update tracking of latest article sent
 			var_global.LATEST_NEWS_IMAGE = details['image_link']
