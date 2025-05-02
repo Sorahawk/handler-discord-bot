@@ -13,7 +13,6 @@ def check_command(user_input):
 		command = command_name + ' '
 
 		if lowered_input.startswith(command):
-			# have to slice by index instead of using replace, to be case-insensitive
 			user_input = user_input[len(command):]
 
 			return f'{command_name}_method', user_input
