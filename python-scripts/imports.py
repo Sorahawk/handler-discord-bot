@@ -6,6 +6,7 @@ import random
 import discord
 import operator
 import requests
+import traceback
 import subprocess
 import googletrans
 
@@ -21,6 +22,7 @@ from var_global import *
 from var_secret import *
 
 from func_http import *
+from func_error import *
 from func_input import *
 
 from func_embed import *

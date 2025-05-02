@@ -58,5 +58,4 @@ async def check_latest_news():
 			var_global.LATEST_NEWS_IMAGE = details['image_link']
 
 	except Exception as e:
-		await var_global.NEWS_CHANNEL.send(f"ERROR in `check_latest_news`: {e}")
-		await var_global.NEWS_CHANNEL.send(f"```{news_webpage}```")
+		await send_traceback(e, var_global.NEWS_CHANNEL)

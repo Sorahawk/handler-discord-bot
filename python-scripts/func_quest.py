@@ -92,5 +92,4 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 				await send_quest_embed(details, channel)
 
 	except Exception as e:
-		await channel.send(f"ERROR in `display_weekly_quests`: {e}")
-		await channel.send(f"```{events_webpage}```")
+		await send_traceback(e, channel)
