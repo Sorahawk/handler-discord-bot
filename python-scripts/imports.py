@@ -21,7 +21,7 @@ from var_global import *
 from var_secret import *
 
 from func_http import *
-from func_message import *
+from func_input import *
 
 from func_embed import *
 
