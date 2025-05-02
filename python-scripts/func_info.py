@@ -10,7 +10,9 @@ async def check_wilds_info():
 	details_list += await process_wilds_news(main_webpage)
 	details_list += await process_wilds_notice(main_webpage)
 
-	# TODO: sort details_list
+	# sort new items primarily by date, then secondarily by type
+	# TODO: figure out how to sort by title according to INFO_MAPPING 
+	details_list = sorted(details_list, operator.itemgetter('date', 'title'))
 
 	# iterate through new items, in correct order
 	for details in details_list:
