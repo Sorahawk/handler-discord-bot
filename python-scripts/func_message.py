@@ -40,8 +40,8 @@ def check_flags(user_input):
 		user_input = user_input.replace(flag.lower(), ' ').replace(flag.upper(), ' ')
 
 	# remove any other 'flags', a dash followed by a single letter, even if they are not valid
-	other_flags = '-[a-zA-Z] '
-	user_input = re.sub(other_flags, ' ', user_input + ' ')
+	other_flags = ' -[a-zA-Z] '
+	user_input = re.sub(other_flags, ' ', ' ' + user_input + ' ')
 
 	# remove any excess whitespace
 	user_input = ' '.join(user_input.split())
