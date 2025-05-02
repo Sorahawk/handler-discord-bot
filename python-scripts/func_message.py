@@ -13,6 +13,7 @@ def check_command(user_input):
 		command = command_name + ' '
 
 		if lowered_input.startswith(command):
+			# slice command word out of input string
 			user_input = user_input[len(command):]
 
 			return f'{command_name}_method', user_input
