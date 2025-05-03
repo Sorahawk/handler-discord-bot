@@ -10,12 +10,16 @@ async def check_wilds_info():
 		support_webpage = make_get_request(WILDS_SUPPORT_URL, use_proxy=True).text
 
 		# process HTML data
-		html_data_main = html.fromstring(main_webpage)
+		main_html = html.fromstring(main_webpage)
+		update_html = html.fromstring(update_webpage)
+		support_html = html.fromstring(support_webpage)
 
 		# consolidate new info items across all types
 		details_list = []
-		details_list += await process_wilds_news(html_data_main)
-		details_list += await process_wilds_notice(html_data_main)
+		details_list += await process_wilds_news(main_html)
+		details_list += await process_wilds_notice(main_html)
+		details_list += await process_wilds_update(update_html)
+		details_list += await process_wilds_support(support_html)
 
 		# generate a dictionary which maps each category to its index position in INFO_MAPPING
 		order = {category: index for index, category in enumerate(INFO_MAPPING)}
@@ -138,4 +142,9 @@ async def process_wilds_notice(html_data):
 
 # processes patch notes of Wilds update information page
 async def process_wilds_update(html_data):
-	pass
+	return []
+
+
+# processes support articles of Wilds support page
+async def process_wilds_support(html_data):
+	return []
