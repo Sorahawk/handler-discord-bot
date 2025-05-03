@@ -3,32 +3,28 @@ from imports import *
 
 # checks for the latest info on Wilds
 async def check_wilds_info():
-	try:
-		# retrieve webpage contents
-		main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
-		update_webpage = make_get_request(WILDS_UPDATE_URL).text
-		support_webpage = make_get_request(WILDS_SUPPORT_URL, use_proxy=True).text
+	# retrieve webpage contents
+	main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
+	update_webpage = make_get_request(WILDS_UPDATE_URL).text
+	support_webpage = make_get_request(WILDS_SUPPORT_URL, use_proxy=True).text
 
-		# process HTML data
-		html_data_main = html.fromstring(main_webpage)
+	# process HTML data
+	html_data_main = html.fromstring(main_webpage)
 
-		# consolidate new info items across all types
-		details_list = []
-		details_list += await process_wilds_news(html_data_main)
-		details_list += await process_wilds_notice(html_data_main)
+	# consolidate new info items across all types
+	details_list = []
+	details_list += await process_wilds_news(html_data_main)
+	details_list += await process_wilds_notice(html_data_main)
 
-		# generate a dictionary which maps each category to its index position in INFO_MAPPING
-		order = {category: index for index, category in enumerate(INFO_MAPPING)}
+	# generate a dictionary which maps each category to its index position in INFO_MAPPING
+	order = {category: index for index, category in enumerate(INFO_MAPPING)}
 
-		# sort new items primarily by date, then subsequently by type
-		details_list = sorted(details_list, key=lambda item: (item["date"], order[item["category"]]))
+	# sort new items primarily by date, then subsequently by type
+	details_list = sorted(details_list, key=lambda item: (item["date"], order[item["category"]]))
 
-		# iterate through new items, in correct order
-		for details in details_list:
-			await send_news_embed(details, var_global.INFO_CHANNEL)
-
-	except Exception as e:
-		await send_traceback(e, var_global.INFO_CHANNEL)
+	# iterate through new items, in correct order
+	for details in details_list:
+		await send_news_embed(details, var_global.INFO_CHANNEL)
 
 
 # processes 'News' section of Wilds main page
