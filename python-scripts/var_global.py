@@ -119,10 +119,10 @@ LATEST_NEWS_IMAGE = ''
 # names and color codes for News categories
 NEWS_MAPPING = {
 	'cat_game': ['Game', 0x0D7EC4],
-	'cat_media': ['Media', 0x019478],
 	'cat_event': ['Event', 0x8C48AF],
-	'cat_campaign': ['Campaign', 0xD77417],
 	'cat_goods': ['Goods', 0xCF0707],
+	'cat_media': ['Media', 0x019478],
+	'cat_campaign': ['Campaign', 0xD77417],
 }
 
 

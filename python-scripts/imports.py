@@ -4,7 +4,6 @@ import io
 import re
 import random
 import discord
-import operator
 import requests
 import traceback
 import subprocess

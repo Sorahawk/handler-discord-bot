@@ -14,8 +14,11 @@ async def check_wilds_info():
 		details_list += await process_wilds_news(html_data_main)
 		details_list += await process_wilds_notice(html_data_main)
 
-		# sort new items primarily by date, then secondarily by type
-		# TODO: figure out how to sort by title according to INFO_MAPPING 
+		# generate a dictionary which maps each category to its index position in INFO_MAPPING
+		order = {category: index for index, category in enumerate(INFO_MAPPING)}
+
+		# sort new items primarily by date, then subsequently by type
+		details_list = sorted(details_list, key=lambda item: (item["date"], order[item["category"]]))
 
 		# iterate through new items, in correct order
 		for details in details_list:
