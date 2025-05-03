@@ -16,7 +16,6 @@ async def check_wilds_info():
 
 		# sort new items primarily by date, then secondarily by type
 		# TODO: figure out how to sort by title according to INFO_MAPPING 
-		# details_list = sorted(details_list, operator.itemgetter('date', 'title'))
 
 		# iterate through new items, in correct order
 		for details in details_list:
@@ -46,12 +45,13 @@ async def process_wilds_news(html_data):
 			break
 
 		details = {
+			'category': (category := 'news'),
 			'title_link': WILDS_MAIN_URL,
 			'image_link': image_link
 		}
 
 		# set title and color code
-		details['title'], details['color_code'] = INFO_MAPPING['news']
+		details['title'], details['color_code'] = INFO_MAPPING[category]
 
 		# set description
 		caption = ' '.join(item.find_class('news-item__text')[0].text_content().split())
@@ -105,12 +105,13 @@ async def process_wilds_notice(html_data):
 			break
 
 		details = {
+			'category': (category := 'notice'),
 			'title_link': WILDS_MAIN_URL,
 			'notice_identifier': notice_identifier
 		}
 
 		# set title and color code
-		details['title'], details['color_code'] = INFO_MAPPING['notice']
+		details['title'], details['color_code'] = INFO_MAPPING[category]
 
 		# set description
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
