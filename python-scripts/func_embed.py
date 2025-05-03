@@ -42,13 +42,13 @@ async def send_news_embed(details, channel):
 	embed_msg.set_footer(text=details['date'].strftime(output_format))
 
 	# additional fields for Update
-	if details['category'] == 'update':
+	if 'release_date' in details:
 		embed_msg.add_field(name=details.get('contents_header', 'Details'), value=details['contents'], inline=False)
 		embed_msg.add_field(name='Release Date', value=details['release_date'].strftime(output_format), inline=False)
 		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
 	# additional fields for Support
-	elif details['category'] == 'support':
+	elif 'labels' in details:
 		embed_msg.add_field(name='Categories', value=details['labels'], inline=False)
 		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
