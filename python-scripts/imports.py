@@ -20,9 +20,7 @@ import var_global
 from var_global import *
 from var_secret import *
 
-from func_http import *
-from func_error import *
-from func_input import *
+from func_misc import *
 
 from func_embed import *
 

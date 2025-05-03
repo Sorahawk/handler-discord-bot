@@ -16,10 +16,10 @@ async def check_wilds_info():
 
 		# consolidate new info items across all types
 		details_list = []
-		details_list += await process_wilds_news(main_html)
-		details_list += await process_wilds_notice(main_html)
-		details_list += await process_wilds_update(update_html)
-		details_list += await process_wilds_support(support_html)
+		details_list += await check_wilds_news(main_html)
+		details_list += await check_wilds_notice(main_html)
+		details_list += await check_wilds_update(update_html)
+		details_list += await check_wilds_support(support_html)
 
 		# generate a dictionary which maps each category to its index position in INFO_MAPPING
 		order = {category: index for index, category in enumerate(INFO_MAPPING)}
@@ -36,13 +36,13 @@ async def check_wilds_info():
 
 
 # processes 'News' section of Wilds main page
-async def process_wilds_news(html_data):
+async def check_wilds_news(html_data):
 
 	# check for Wilds news
-	news_list = html_data.find_class('news-container')[0].find_class('news-item')
+	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	details_list = []
 
-	for item in news_list:
+	for item in item_list:
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 
 		# set latest news image on fresh startup
@@ -83,7 +83,7 @@ async def process_wilds_news(html_data):
 
 
 # processes 'Important Notice' section of Wilds main page
-async def process_wilds_notice(html_data):
+async def check_wilds_notice(html_data):
 
 	# extract 'Important Notice' section
 	notice_block = html_data.get_element_by_id('ImportantNotice', None)
@@ -95,10 +95,10 @@ async def process_wilds_notice(html_data):
 		return []
 
 	# consolidate current notices
-	notice_list = notice_block.find_class('ImportantNotice_list')[0].xpath('li/a')
+	item_list = notice_block.find_class('ImportantNotice_list')[0].xpath('li/a')
 	details_list = []
 
-	for item in notice_list:
+	for item in item_list:
 
 		# construct identifier string to 'mark' latest notice
 		date = item.xpath('dl/dt')[0].text_content().strip()
@@ -141,10 +141,78 @@ async def process_wilds_notice(html_data):
 
 
 # processes patch notes of Wilds update information page
-async def process_wilds_update(html_data):
-	return []
+async def check_wilds_update(html_data):
+
+	# check for new Wilds patch notes
+	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
+	details_list = []
+
+	for item in item_list:
+		article_link = urljoin(WILDS_UPDATE_URL, item.get('href'))
+
+		# set latest patch notes on fresh startup
+		if not var_global.LATEST_WILDS_UPDATE:
+			var_global.LATEST_WILDS_UPDATE = article_link
+			return []
+
+		# break iteration once latest patch notes is matched
+		elif article_link == var_global.LATEST_WILDS_UPDATE:
+			break
+
+		details = {
+			'category': (category := 'update'),
+			'title_link': WILDS_UPDATE_URL,
+			'article_link': article_link
+		}
+
+		# set title and color code
+		details['title'], details['color_code'] = INFO_MAPPING[category]
+
+		# set description
+		version_number = ' '.join(item.find_class('latest_update_list_ver')[0].text_content().split())
+		details['description'] = f"**[{version_number}]({article_link})**"
+
+		# format date
+		# TODO: somehow convert the release date to a datetime object then compare
+		# if release date is earlier than current, then use the release date as the footer date
+		# if not, use current date
+		details['date'] = datetime.now()
+
+		# extract image if present
+		if (image := item.find_class('latest_update_list_thumb')):
+			details['image_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
+
+		# extract release date
+		# regex pattern to match a word (month), followed by 1-2 digits (day), an optional comma, then 4 digits (year)
+		release_date = re.search(r'[a-zA-Z]+\s+\d{1,2},?\s+\d{4}', item.find_class('latest_update_list_date')[0].xpath('dd')[0].text_content().strip())
+		release_date = datetime.strptime(release_date.group().replace(',', ''), '%B %d %Y')
+		details['release_date'] = release_date
+
+		# determine embed footer date; set to release date if it has already passed, otherwise current date
+		now = datetime.now()
+		details['date'] = now if release_date > now else release_date
+
+		# extract patch description
+		update_details = item.find_class('latest_update_list_detail')[0]
+
+		if (header := update_details.xpath('dt')[0].text_content().strip()):
+			details['contents_header'] = header
+
+		details['contents'] = '\n'.join([f'• {pointer.text_content().strip()}' for pointer in update_details.xpath('dd')])
+
+		# extract platforms
+		platforms = item.find_class('latest_update_list_platform')[0].xpath('li')
+		details['platforms'] = ', '.join([p.text_content().strip() for p in platforms])
+		
+		details_list.append(details)
+
+	# update tracking if new item appeared
+	if details_list:
+		var_global.LATEST_WILDS_UPDATE = details_list[0]['article_link']
+
+	return details_list
 
 
 # processes support articles of Wilds support page
-async def process_wilds_support(html_data):
+async def check_wilds_support(html_data):
 	return []

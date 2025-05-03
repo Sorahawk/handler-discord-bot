@@ -3,8 +3,8 @@ from imports import *
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 # Thus, obtain image data to pass into Discord directly
-def add_embed_image(image_url, embed_msg, use_proxy=False):
-	image_data = make_get_request(image_url, use_proxy).content
+def add_embed_image(image_link, embed_msg, use_proxy=False):
+	image_data = make_get_request(image_link, use_proxy).content
 	image_file = discord.File(io.BytesIO(image_data), filename="image.jpg")
 
 	embed_msg.set_image(url="attachment://image.jpg")
@@ -30,7 +30,7 @@ async def send_quest_embed(quest_details, channel):
 	embed_msg.add_field(name='Start', value=start_date, inline=True)
 	embed_msg.add_field(name='End', value=end_date, inline=True)
 
-	embed_msg, image_file = add_embed_image(quest_details['image_url'], embed_msg)
+	embed_msg, image_file = add_embed_image(quest_details['image_link'], embed_msg)
 	await channel.send(embed=embed_msg, file=image_file)
 
 
@@ -40,6 +40,12 @@ async def send_news_embed(details, channel):
 
 	output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
 	embed_msg.set_footer(text=details['date'].strftime(output_format))
+
+	# additional processing for Update embeds
+	if 'release_date' in details:
+		embed_msg.add_field(name=details.get('contents_header', 'Details'), value=details['contents'], inline=False)
+		embed_msg.add_field(name='Release Date', value=details['release_date'].strftime(output_format), inline=False)
+		embed_msg.add_field(name='Platform(s)', value=details['platforms'], inline=False)
 
 	if 'image_link' in details:
 		embed_msg, image_file = add_embed_image(details['image_link'], embed_msg, use_proxy=True)
