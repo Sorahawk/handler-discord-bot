@@ -38,7 +38,7 @@ async def check_wilds_info():
 # processes 'News' section of Wilds main page
 async def check_wilds_news(html_data):
 
-	# check for Wilds news
+	# consolidate current news items
 	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	details_list = []
 
@@ -50,7 +50,7 @@ async def check_wilds_news(html_data):
 			var_global.LATEST_WILDS_IMAGE = image_link
 			return []
 
-		# break iteration once latest news image is matched
+		# break iteration once latest item is matched
 		elif image_link == var_global.LATEST_WILDS_IMAGE:
 			break
 
@@ -110,7 +110,7 @@ async def check_wilds_notice(html_data):
 			var_global.LATEST_WILDS_NOTICE = notice_identifier
 			return []
 
-		# break iteration once latest notice is matched
+		# break iteration once latest item is matched
 		elif notice_identifier == var_global.LATEST_WILDS_NOTICE:
 			break
 
@@ -143,7 +143,7 @@ async def check_wilds_notice(html_data):
 # processes patch notes of Wilds update information page
 async def check_wilds_update(html_data):
 
-	# check for new Wilds patch notes
+	# consolidate current patch notes
 	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
 	details_list = []
 
@@ -155,7 +155,7 @@ async def check_wilds_update(html_data):
 			var_global.LATEST_WILDS_UPDATE = article_link
 			return []
 
-		# break iteration once latest patch notes is matched
+		# break iteration once latest item is matched
 		elif article_link == var_global.LATEST_WILDS_UPDATE:
 			break
 
@@ -172,12 +172,6 @@ async def check_wilds_update(html_data):
 		version_number = ' '.join(item.find_class('latest_update_list_ver')[0].text_content().split())
 		details['description'] = f"**[{version_number}]({article_link})**"
 
-		# format date
-		# TODO: somehow convert the release date to a datetime object then compare
-		# if release date is earlier than current, then use the release date as the footer date
-		# if not, use current date
-		details['date'] = datetime.now()
-
 		# extract image if present
 		if (image := item.find_class('latest_update_list_thumb')):
 			details['image_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
@@ -188,9 +182,9 @@ async def check_wilds_update(html_data):
 		release_date = datetime.strptime(release_date.group().replace(',', ''), '%B %d %Y')
 		details['release_date'] = release_date
 
-		# determine embed footer date; set to release date if it has already passed, otherwise current date
-		now = datetime.now()
-		details['date'] = now if release_date > now else release_date
+		# format date
+		# set to release date if it has already passed, otherwise current date
+		details['date'] = now if release_date > (now := datetime.now()) else release_date
 
 		# extract patch description
 		update_details = item.find_class('latest_update_list_detail')[0]
@@ -198,11 +192,10 @@ async def check_wilds_update(html_data):
 		if (header := update_details.xpath('dt')[0].text_content().strip()):
 			details['contents_header'] = header
 
-		details['contents'] = '\n'.join([f'• {pointer.text_content().strip()}' for pointer in update_details.xpath('dd')])
+		details['contents'] = '\n'.join([f'• {line.text_content().strip()}' for line in update_details.xpath('dd')])
 
 		# extract platforms
-		platforms = item.find_class('latest_update_list_platform')[0].xpath('li')
-		details['platforms'] = ', '.join([p.text_content().strip() for p in platforms])
+		details['platforms'] = ', '.join([p.text_content().strip() for p in item.find_class('latest_update_list_platform')[0].xpath('li')])
 		
 		details_list.append(details)
 
@@ -215,4 +208,51 @@ async def check_wilds_update(html_data):
 
 # processes support articles of Wilds support page
 async def check_wilds_support(html_data):
-	return []
+
+	# generate reference dict containing article timings
+	faq_data = json.loads(html_data.get_element_by_id('__NEXT_DATA__').text_content())['props']['pageProps']['faq_list']['faq_article_list']
+	article_timings = {faq['slug']: datetime.fromtimestamp(faq['date']) for faq in faq_data}
+
+	# consolidate current support articles
+	item_list = html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a')
+	details_list = []
+
+	for item in item_list:
+		article_link = urljoin(WILDS_SUPPORT_URL, item.get('href'))
+
+		# set latest support article on fresh startup
+		if not var_global.LATEST_WILDS_SUPPORT:
+			var_global.LATEST_WILDS_SUPPORT = article_link
+			return []
+
+		# break iteration once latest item is matched
+		elif article_link == var_global.LATEST_WILDS_SUPPORT:
+			break
+
+		details = {
+			'category': (category := 'support'),
+			'title_link': WILDS_SUPPORT_URL,
+			'article_link': article_link,
+			'date': article_timings[article_link.split('/')[-1]]
+		}
+
+		# set title and color code
+		details['title'], details['color_code'] = INFO_MAPPING[category]
+
+		# set description
+		caption = item.xpath('div/p')[0].text_content().strip()
+		details['description'] = f"[{caption}]({article_link})"
+
+		# extract article category
+		details['labels'] = ', '.join([cat.text_content().strip() for cat in item.find_class('Label_ca___ZPtj')[0].xpath('span')])
+
+		# extract article platforms
+		details['platforms'] = ', '.join([p.text_content().strip() for p in item.find_class('Label_pl__hNw2r')[0].xpath('span')])
+
+		details_list.append(details)
+
+	# update tracking if new item appeared
+	if details_list:
+		var_global.LATEST_WILDS_SUPPORT = details_list[0]['article_link']
+
+	return details_list

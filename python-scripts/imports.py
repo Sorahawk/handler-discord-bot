@@ -2,6 +2,7 @@
 # external libraries
 import io
 import re
+import json
 import random
 import discord
 import requests

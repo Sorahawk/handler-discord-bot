@@ -41,11 +41,16 @@ async def send_news_embed(details, channel):
 	output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
 	embed_msg.set_footer(text=details['date'].strftime(output_format))
 
-	# additional processing for Update embeds
-	if 'release_date' in details:
+	# additional fields for Update
+	if details['category'] == 'update':
 		embed_msg.add_field(name=details.get('contents_header', 'Details'), value=details['contents'], inline=False)
 		embed_msg.add_field(name='Release Date', value=details['release_date'].strftime(output_format), inline=False)
-		embed_msg.add_field(name='Platform(s)', value=details['platforms'], inline=False)
+		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
+
+	# additional fields for Support
+	elif details['category'] == 'support':
+		embed_msg.add_field(name='Categories', value=details['labels'], inline=False)
+		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
 	if 'image_link' in details:
 		embed_msg, image_file = add_embed_image(details['image_link'], embed_msg, use_proxy=True)
