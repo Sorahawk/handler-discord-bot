@@ -26,13 +26,21 @@ async def task_rotate_status():
 # poll for news every hour
 @loop(hours=1)
 async def task_check_latest_news():
-	await check_latest_news()
+	try:
+		await check_latest_news()
+
+	except Exception as e:
+		await send_traceback(e, var_global.NEWS_CHANNEL)
 
 
 # poll for Wilds info every hour
 @loop(hours=1)
 async def task_check_wilds_info():
-	await check_wilds_info()
+	try:
+		await check_wilds_info()
+
+	except Exception as e:
+		await send_traceback(e, var_global.INFO_CHANNEL)
 
 
 # display new weekly quests every Wednesday at 8.01am SGT
@@ -41,13 +49,16 @@ async def task_check_wilds_info():
 tz = timezone(timedelta(hours=8))  # UTC+8
 @loop(time=time(hour=8, minute=1, tzinfo=tz))  # runs daily at 8.01am
 async def task_display_weekly_quests():
+	try:
+		if datetime.now(tz).weekday() != 2:  # only proceed on Wednesdays
+			return
 
-	if datetime.now(tz).weekday() != 2:  # only proceed on Wednesdays
-		return
+		greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
+		await var_global.QUEST_CHANNEL.send(greeting_msg)
+		await display_weekly_quests(var_global.QUEST_CHANNEL, display_all=True)
 
-	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
-	await var_global.QUEST_CHANNEL.send(greeting_msg)
-	await display_weekly_quests(var_global.QUEST_CHANNEL, display_all=True)
+	except Exception as e:
+		await send_traceback(e, var_global.QUEST_CHANNEL)
 
 
 @bot.event
@@ -73,32 +84,36 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-	prefix_length = len(BOT_COMMAND_PREFIX)  # prefix might not always be single character
+	try:
+		prefix_length = len(BOT_COMMAND_PREFIX)  # prefix might not always be single character
 
-	# ignore messages if bot is not ready, and messages sent by the bot itself
-	if not bot.is_ready() or message.author == bot.user:
-		return
+		# ignore messages if bot is not ready, and messages sent by the bot itself
+		if not bot.is_ready() or message.author == bot.user:
+			return
 
-	# delete any user messages from the quest announcements channel to keep it clean
-	if message.channel.id == var_global.QUEST_CHANNEL.id:
-		await message.delete()
-		return
+		# delete any user messages from the quest announcements channel to keep it clean
+		if message.channel.id == var_global.QUEST_CHANNEL.id:
+			await message.delete()
+			return
 
-	# ignore messages that don't start with the command prefix
-	if message.content[:prefix_length] != BOT_COMMAND_PREFIX:
-		return
+		# ignore messages that don't start with the command prefix
+		if message.content[:prefix_length] != BOT_COMMAND_PREFIX:
+			return
 
-	# check for any valid command if the message starts with the prefix symbol
-	result = check_command(message.content[prefix_length:])
-	if not result:
-		return
+		# check for any valid command if the message starts with the prefix symbol
+		result = check_command(message.content[prefix_length:])
+		if not result:
+			return
 
-	command_method, user_input = result[0], result[1]
+		command_method, user_input = result[0], result[1]
 
-	# check for presence of any command flags
-	# in the process also removes any excess whitespace
-	flag_presence, user_input = check_flags(user_input)
-	await eval(command_method)(message, user_input, flag_presence)
+		# check for presence of any command flags
+		# in the process also removes any excess whitespace
+		flag_presence, user_input = check_flags(user_input)
+		await eval(command_method)(message, user_input, flag_presence)
+
+	except Exception as e:
+		await send_traceback(e, message.channel)
 
 
 # start bot
