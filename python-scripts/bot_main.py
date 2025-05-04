@@ -75,7 +75,7 @@ async def on_ready():
 async def on_message(message):
 	prefix_length = len(BOT_COMMAND_PREFIX)  # prefix might not always be single character
 
-	# ignore messages if bot is not ready, or messages sent from the bot itself
+	# ignore messages if bot is not ready, and messages sent by the bot itself
 	if not bot.is_ready() or message.author == bot.user:
 		return
 
