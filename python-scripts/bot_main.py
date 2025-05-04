@@ -35,14 +35,14 @@ async def task_check_wilds_info():
 	await check_wilds_info()
 
 
-# execute weekly quest update weekly every Wednesday at 8.01am SGT
-# Discord seems to execute the task a few seconds before the minute actually occurs.
-# in this case, also give the website a minute to update to the next week
+# display new weekly quests every Wednesday at 8.01am SGT
+# Discord seems to execute the task a few seconds before the minute actually occurs
+# in this case, also give the website a minute to update for the new week
 tz = timezone(timedelta(hours=8))  # UTC+8
-@loop(time=time(hour=8, minute=1, tzinfo=tz))
+@loop(time=time(hour=8, minute=1, tzinfo=tz))  # runs daily at 8.01am
 async def task_display_weekly_quests():
 
-	if datetime.now(tz).weekday() != 2:  # only execute on Wednesdays
+	if datetime.now(tz).weekday() != 2:  # only proceed on Wednesdays
 		return
 
 	greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
@@ -60,8 +60,8 @@ async def on_ready():
 	print(f"{bot.user} is online.\n")
 
 	# initialise global channel objects
-	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 	var_global.INFO_CHANNEL = bot.get_channel(INFO_CHANNEL_ID)
+	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
 
 	# start tasks
@@ -75,7 +75,7 @@ async def on_ready():
 async def on_message(message):
 	prefix_length = len(BOT_COMMAND_PREFIX)  # prefix might not always be single character
 
-	# ignore any messages if bot is not ready or messages sent from the bot itself
+	# ignore messages if bot is not ready, or messages sent from the bot itself
 	if not bot.is_ready() or message.author == bot.user:
 		return
 
