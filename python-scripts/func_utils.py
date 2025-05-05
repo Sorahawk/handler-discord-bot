@@ -39,7 +39,7 @@ def check_flags(user_input):
 
 def make_get_request(url, use_proxy=False):
 	if not use_proxy:
-		return requests.get(url, headers=STANDARD_HEADERS)
+		response = requests.get(url, headers=STANDARD_HEADERS)
 
 	else:  # usage of proxy required when hitting www.monsterhunter.com; VPN alone unable to bypass, unlike for info.monsterhunter.com
 		proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
@@ -51,8 +51,9 @@ def make_get_request(url, use_proxy=False):
 		}
 
 		response = requests.get(url, headers=STANDARD_HEADERS, proxies=proxies)
-		response.encoding = 'utf-8'
-		return response
+
+	response.encoding = 'utf-8'
+	return response
 
 
 # obtains full traceback of given exception and outputs to specified channel
