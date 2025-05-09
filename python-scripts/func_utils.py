@@ -37,23 +37,11 @@ def check_flags(user_input):
 	return flag_presence, user_input
 
 
-def make_get_request(url, use_proxy=False):
-	if not use_proxy:
-		response = requests.get(url, headers=STANDARD_HEADERS)
-
-	else:  # usage of proxy required when hitting www.monsterhunter.com; VPN alone unable to bypass, unlike for info.monsterhunter.com
-		proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
-		proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
-
-		proxies = {
-			'http': proxy_auth_url,
-			'https': proxy_auth_url
-		}
-
-		response = requests.get(url, headers=STANDARD_HEADERS, proxies=proxies)
-
-	response.encoding = 'utf-8'
-	return response
+# makes a GET request using httpx.AsyncClient()
+async def make_get_request(url, use_proxy=False, get_content=False):
+	client = var_global.ASYNC_CLIENT_PROXY if use_proxy else var_global.ASYNC_CLIENT
+	response = await client.get(url, headers=STANDARD_HEADERS)
+	return response.content if get_content else response.text
 
 
 # obtains full traceback of given exception and outputs to specified channel

@@ -4,7 +4,7 @@ from imports import *
 # sends all quests within a specified week as embed messages
 async def display_weekly_quests(channel, week_index=0, display_all=False):
 	# retrieve webpage contents
-	events_webpage = make_get_request(EVENT_QUEST_URL).text
+	events_webpage = await make_get_request(EVENT_QUEST_URL)
 
 	# process HTML data
 	html_data = html.fromstring(events_webpage)

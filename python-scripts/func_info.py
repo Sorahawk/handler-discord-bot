@@ -4,9 +4,9 @@ from imports import *
 # checks for the latest info on Wilds
 async def check_wilds_info():
 	# retrieve webpage contents
-	main_webpage = make_get_request(WILDS_MAIN_URL, use_proxy=True).text
-	update_webpage = make_get_request(WILDS_UPDATE_URL).text
-	support_webpage = make_get_request(WILDS_SUPPORT_URL, use_proxy=True).text
+	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
+	update_webpage = await make_get_request(WILDS_UPDATE_URL)
+	support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
 
 	# process HTML data
 	main_html = html.fromstring(main_webpage)
@@ -15,10 +15,10 @@ async def check_wilds_info():
 
 	# consolidate new info items across all types
 	details_list = []
-	details_list += await check_wilds_news(main_html)
-	details_list += await check_wilds_notice(main_html)
-	details_list += await check_wilds_update(update_html)
-	details_list += await check_wilds_support(support_html)
+	details_list += check_wilds_news(main_html)
+	details_list += check_wilds_notice(main_html)
+	details_list += check_wilds_update(update_html)
+	details_list += check_wilds_support(support_html)
 
 	# generate a dictionary which maps each category to its index position in INFO_MAPPING
 	order = {category: index for index, category in enumerate(INFO_MAPPING)}
@@ -32,7 +32,7 @@ async def check_wilds_info():
 
 
 # processes 'News' section of Wilds main page
-async def check_wilds_news(html_data):
+def check_wilds_news(html_data):
 
 	# consolidate current news items
 	item_list = html_data.find_class('news-container')[0].find_class('news-item')
@@ -79,7 +79,7 @@ async def check_wilds_news(html_data):
 
 
 # processes 'Important Notice' section of Wilds main page
-async def check_wilds_notice(html_data):
+def check_wilds_notice(html_data):
 
 	# extract 'Important Notice' section
 	notice_block = html_data.get_element_by_id('ImportantNotice', None)
@@ -87,7 +87,6 @@ async def check_wilds_notice(html_data):
 	# skip if 'Important Notice' section is not present on webpage
 	if notice_block is None:
 		var_global.LATEST_WILDS_NOTICE = []
-		await var_global.INFO_CHANNEL.send('Important Notice section is not present on Wilds webpage.')
 		return []
 
 	# consolidate current notices
@@ -137,7 +136,7 @@ async def check_wilds_notice(html_data):
 
 
 # processes patch notes of Wilds update information page
-async def check_wilds_update(html_data):
+def check_wilds_update(html_data):
 
 	# consolidate current patch notes
 	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
@@ -203,7 +202,7 @@ async def check_wilds_update(html_data):
 
 
 # processes support articles of Wilds support page
-async def check_wilds_support(html_data):
+def check_wilds_support(html_data):
 
 	# generate reference dict containing article timings
 	faq_data = json.loads(html_data.get_element_by_id('__NEXT_DATA__').text_content())['props']['pageProps']['faq_list']['faq_article_list']

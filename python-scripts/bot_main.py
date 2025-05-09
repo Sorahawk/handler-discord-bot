@@ -7,7 +7,6 @@ intents = discord.Intents.all()
 
 # initialise client
 bot = discord.Client(intents=intents)
-var_global.BOT_INSTANCE = bot
 
 
 # automatically rotate bot's Discord status every 10 minutes
@@ -20,17 +19,7 @@ async def task_rotate_status():
 	else:
 		activity_status = discord.Activity(type=activity_type, name=activity)
 
-	await var_global.BOT_INSTANCE.change_presence(activity=activity_status)
-
-
-# poll for news every hour
-@loop(hours=1)
-async def task_check_latest_news():
-	try:
-		await check_latest_news()
-
-	except Exception as e:
-		await send_traceback(e, var_global.NEWS_CHANNEL)
+	await bot.change_presence(activity=activity_status)
 
 
 # poll for Wilds info every hour
@@ -41,6 +30,16 @@ async def task_check_wilds_info():
 
 	except Exception as e:
 		await send_traceback(e, var_global.INFO_CHANNEL)
+
+
+# poll for news every hour
+@loop(hours=1)
+async def task_check_latest_news():
+	try:
+		await check_latest_news()
+
+	except Exception as e:
+		await send_traceback(e, var_global.NEWS_CHANNEL)
 
 
 # display new weekly quests every Wednesday at 8.01am SGT
@@ -74,6 +73,14 @@ async def on_ready():
 	var_global.INFO_CHANNEL = bot.get_channel(INFO_CHANNEL_ID)
 	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
+
+	# initialise HTTP async clients
+	# usage of proxy required when hitting www.monsterhunter.com, as VPN alone is unable to bypass, unlike for info.monsterhunter.com
+	proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
+	proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
+
+	var_global.ASYNC_CLIENT = httpx.AsyncClient(http2=True)
+	var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(http2=True, proxy=proxy_auth_url)
 
 	# start tasks
 	task_rotate_status.start()

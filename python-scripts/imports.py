@@ -3,9 +3,9 @@
 import io
 import re
 import json
+import httpx
 import random
 import discord
-import requests
 import traceback
 import subprocess
 import googletrans

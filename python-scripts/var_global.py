@@ -14,13 +14,12 @@ LINUX_SERVICE_NAME = 'handler-bot.service'
 
 ### INIT ###
 
-BOT_INSTANCE = None
-
 QUEST_CHANNEL = None
-
 NEWS_CHANNEL = None
-
 INFO_CHANNEL = None
+
+ASYNC_CLIENT = None
+ASYNC_CLIENT_PROXY = None
 
 
 
