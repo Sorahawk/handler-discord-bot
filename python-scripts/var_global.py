@@ -140,7 +140,7 @@ WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/c
 # URL string of the latest Wilds news image
 LATEST_WILDS_IMAGE = ''
 
-# string identifier to store the latest 'Important Notice' on Wilds main page; format is "<DATE> <CAPTION>"
+# string identifier to store the latest 'Important Notice' on Wilds main page; format is "<DATE>|<CAPTION>"
 LATEST_WILDS_NOTICE = ''
 
 # URL string of the latest patch notes

@@ -98,21 +98,21 @@ def check_wilds_notice(html_data):
 		# construct identifier string to 'mark' latest notice
 		date = item.xpath('dl/dt')[0].text_content().strip()
 		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
-		notice_identifier = f"{date} {caption}"
+		identifier = f"{date}|{caption}"
 
-		# set latest notice identifier on fresh startup
+		# set latest identifier on fresh startup
 		if not var_global.LATEST_WILDS_NOTICE:
-			var_global.LATEST_WILDS_NOTICE = notice_identifier
+			var_global.LATEST_WILDS_NOTICE = identifier
 			return []
 
 		# break iteration once latest item is matched
-		elif notice_identifier == var_global.LATEST_WILDS_NOTICE:
+		elif identifier == var_global.LATEST_WILDS_NOTICE:
 			break
 
 		details = {
 			'category': (category := 'notice'),
 			'title_link': WILDS_MAIN_URL,
-			'notice_identifier': notice_identifier
+			'identifier': identifier
 		}
 
 		# set title and color code
@@ -130,7 +130,7 @@ def check_wilds_notice(html_data):
 
 	# update tracking if new item appeared
 	if details_list:
-		var_global.LATEST_WILDS_NOTICE = details_list[0]['notice_identifier']
+		var_global.LATEST_WILDS_NOTICE = details_list[0]['identifier']
 
 	return details_list
 
