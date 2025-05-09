@@ -75,7 +75,6 @@ async def on_ready():
 	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
 
 	# initialise HTTP async clients
-	# usage of proxy required when hitting www.monsterhunter.com, as VPN alone is unable to bypass, unlike for info.monsterhunter.com
 	proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
 	proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
 
