@@ -111,7 +111,7 @@ QUEST_COLOR_CODES = {
 # URL for Japanese News webpage
 JAPANESE_NEWS_URL = 'https://www.monsterhunter.com/ja/news/'
 
-# URL string of the latest news image, used to bookmark the latest article
+# URL string of the latest news image
 LATEST_NEWS_IMAGE = ''
 
 
@@ -137,17 +137,17 @@ WILDS_UPDATE_URL = 'https://info.monsterhunter.com/wilds/update/en-asia/'
 # URL for Wilds support articles webpage
 WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
 
-# list of Wilds news articles
+# list of Wilds news articles; identifier is "YYYY.MM.DD|<IMAGE_LINK>"
 WILDS_NEWS_LIST = []
 
-# list of 'Important Notices' on Wilds main page; format is "<DATE>|<CAPTION>"
+# list of 'Important Notices' on Wilds main page; identifier is "<MONTH> <DAY>, <YEAR>|<CAPTION>"
 WILDS_NOTICE_LIST = []
 
-# list of Wilds patch notes
+# list of Wilds patch notes; identifier is ARTICLE_LINK
 WILDS_UPDATE_LIST = []
 
-# list of Wilds support articles
-WILDS_SUPPORT_LIST = []
+# list of Wilds support articles; identifier is ARTICLE_LINK
+WILDS_SUPPORT_LIST = ['https://www.monsterhunter.com/support/wilds/en/faq/detail/071']
 
 
 # names and color codes for Info categories

@@ -36,15 +36,19 @@ def check_wilds_news(html_data):
 	details_list = []
 	first_run = not var_global.WILDS_NEWS_LIST
 
-	for item in html_data.find_class('news-container')[0].find_class('news-item'):
+	item_list = html_data.find_class('news-container')[0].find_class('news-item')
+	for item in item_list:
+		# construct identifier string
+		date = item.find_class('news-item__ymd')[0].text_content().strip()
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
+		identifier = f"{date}|{image_link}"
 
-		# break iteration once latest item is matched
-		if image_link in var_global.WILDS_NEWS_LIST:
+		# break iteration any registered item is matched
+		if identifier in var_global.WILDS_NEWS_LIST:
 			break
 
 		# register new item to list
-		var_global.WILDS_NEWS_LIST.append(image_link)
+		var_global.WILDS_NEWS_LIST.append(identifier)
 		if first_run:
 			continue
 
@@ -63,7 +67,6 @@ def check_wilds_news(html_data):
 		details['description'] = f"[{caption}]({article_link})"
 
 		# format date
-		date = item.find_class('news-item__ymd')[0].text_content().strip()
 		input_format = '%Y.%m.%d'
 		details['date'] = datetime.strptime(date, input_format)
 
@@ -86,12 +89,12 @@ def check_wilds_notice(html_data):
 		return item_list
 
 	for item in item_list[0].xpath('li/a'):
-		# construct identifier string to 'mark' latest notice
+		# construct identifier string
 		date = item.xpath('dl/dt')[0].text_content().strip()
 		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
 		identifier = f"{date}|{caption}"
 
-		# break iteration once latest item is matched
+		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NOTICE_LIST:
 			break
 
@@ -102,8 +105,7 @@ def check_wilds_notice(html_data):
 
 		details = {
 			'category': (category := 'notice'),
-			'title_link': WILDS_MAIN_URL,
-			'identifier': identifier
+			'title_link': WILDS_MAIN_URL
 		}
 
 		# set title and color code
@@ -127,10 +129,11 @@ def check_wilds_update(html_data):
 	details_list = []
 	first_run = not var_global.WILDS_UPDATE_LIST
 
-	for item in html_data.find_class('latest_update')[0].xpath('li/a'):
+	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
+	for item in item_list:
 		article_link = urljoin(WILDS_UPDATE_URL, item.get('href'))
 
-		# break iteration once latest item is matched
+		# break iteration once any registered item is matched
 		if article_link in var_global.WILDS_UPDATE_LIST:
 			break
 
@@ -141,8 +144,7 @@ def check_wilds_update(html_data):
 
 		details = {
 			'category': (category := 'update'),
-			'title_link': WILDS_UPDATE_URL,
-			'article_link': article_link
+			'title_link': WILDS_UPDATE_URL
 		}
 
 		# set title and color code
@@ -152,19 +154,19 @@ def check_wilds_update(html_data):
 		version_number = ' '.join(item.find_class('latest_update_list_ver')[0].text_content().split())
 		details['description'] = f"**[{version_number}]({article_link})**"
 
-		# extract image if present
-		if (image := item.find_class('latest_update_list_thumb')):
-			details['image_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
+		# format date
 
-		# extract release date
-		# regex pattern to match a word (month), followed by 1-2 digits (day), an optional comma, then 4 digits (year)
+		## regex pattern to match a word (month), followed by 1-2 digits (day), an optional comma, then 4 digits (year)
 		release_date = re.search(r'[a-zA-Z]+\s+\d{1,2},?\s+\d{4}', item.find_class('latest_update_list_date')[0].xpath('dd')[0].text_content().strip())
 		release_date = datetime.strptime(release_date.group().replace(',', ''), '%B %d %Y')
 		details['release_date'] = release_date
 
-		# format date
-		# set to release date if it has already passed, otherwise current date
+		## set embed date to release date if it has already passed, otherwise current date
 		details['date'] = now if release_date > (now := datetime.now()) else release_date
+
+		# extract image if present
+		if (image := item.find_class('latest_update_list_thumb')):
+			details['image_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
 
 		# extract patch description
 		update_details = item.find_class('latest_update_list_detail')[0]
@@ -191,10 +193,11 @@ def check_wilds_support(html_data):
 	faq_data = json.loads(html_data.get_element_by_id('__NEXT_DATA__').text_content())['props']['pageProps']['faq_list']['faq_article_list']
 	article_timings = {faq['slug']: datetime.fromtimestamp(faq['date']) for faq in faq_data}
 
-	for item in html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a'):
+	item_list = html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a')
+	for item in item_list:
 		article_link = urljoin(WILDS_SUPPORT_URL, item.get('href'))
 
-		# break iteration once latest item is matched
+		# break iteration once any registered item is matched
 		if article_link in var_global.WILDS_SUPPORT_LIST:
 			break
 
@@ -205,9 +208,7 @@ def check_wilds_support(html_data):
 
 		details = {
 			'category': (category := 'support'),
-			'title_link': WILDS_SUPPORT_URL,
-			'article_link': article_link,
-			'date': article_timings[article_link.split('/')[-1]]
+			'title_link': WILDS_SUPPORT_URL
 		}
 
 		# set title and color code
@@ -216,6 +217,10 @@ def check_wilds_support(html_data):
 		# set description
 		caption = item.xpath('div/p')[0].text_content().strip()
 		details['description'] = f"[{caption}]({article_link})"
+
+		# format date
+		article_id = article_link.split('/')[-1]
+		details['date'] = article_timings[article_id]
 
 		# extract article categories and platforms
 		def extract_labels(class_name):
