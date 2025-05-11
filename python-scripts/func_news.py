@@ -1,7 +1,7 @@
 from imports import *
 
 
-# checks for the latest news articles
+# checks for the latest news article s
 async def check_latest_news():
 	# retrieve webpage contents via proxy because `www` subdomain seems to be stricter than `info`
 	news_webpage = await make_get_request(JAPANESE_NEWS_URL, use_proxy=True)
@@ -12,19 +12,23 @@ async def check_latest_news():
 
 	# check for new articles
 	details_list = []
+	first_run = not var_global.MH_NEWS_LIST
 	translator = googletrans.Translator()
 
 	for article in news_list:
+		# construct identifier string
+		date = article.find_class('date')[0].text_content().strip()
 		image_link = article.xpath('li/figure/img')[0].get('src')
+		identifier = f"{date}|{image_link}"
 
-		# set latest article image on fresh startup
-		if not var_global.LATEST_NEWS_IMAGE:
-			var_global.LATEST_NEWS_IMAGE = image_link
-			return
-
-		# break iteration once latest article image is matched
-		elif image_link == var_global.LATEST_NEWS_IMAGE:
+		# break iteration once any registered item is matched
+		if identifier in var_global.MH_NEWS_LIST:
 			break
+
+		# register new item to list
+		var_global.MH_NEWS_LIST.append(identifier)
+		if first_run:
+			continue
 
 		details = {
 			'title_link': JAPANESE_NEWS_URL,
@@ -43,7 +47,6 @@ async def check_latest_news():
 		details['description'] = f"[{caption}]({article_link})"
 
 		# format date
-		date = article.find_class('date')[0].text_content().strip()
 		input_format = '%Y.%m.%d'
 		details['date'] = datetime.strptime(date, input_format)
 
@@ -52,6 +55,3 @@ async def check_latest_news():
 	# iterate through new articles, in correct order
 	for details in details_list[::-1]:
 		await send_news_embed(details, var_global.NEWS_CHANNEL)
-
-		# update tracking of latest article sent
-		var_global.LATEST_NEWS_IMAGE = details['image_link']

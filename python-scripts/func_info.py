@@ -43,7 +43,7 @@ def check_wilds_news(html_data):
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 		identifier = f"{date}|{image_link}"
 
-		# break iteration any registered item is matched
+		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NEWS_LIST:
 			break
 
