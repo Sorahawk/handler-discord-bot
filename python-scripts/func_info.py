@@ -4,12 +4,22 @@ from imports import *
 # checks for the latest info on Wilds
 async def check_wilds_info():
 	# retrieve webpage contents
-	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
-	update_webpage = await make_get_request(WILDS_UPDATE_URL)
-	support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
+	# main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
+	# update_webpage = await make_get_request(WILDS_UPDATE_URL)
+	# support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
+
+
+	# TEMP
+	with open('wilds_main.html', encoding='utf-8') as infile:
+		main_webpage = '\n'.join(infile.readlines())
+	with open('wilds_patch.html', encoding='utf-8') as infile:
+		update_webpage = '\n'.join(infile.readlines())
+	with open('wilds_support.html', encoding='utf-8') as infile:
+		support_webpage = '\n'.join(infile.readlines())
+
 
 	# process HTML data
-	main_html = html.fromstring(main_webpage)
+	main_html = html.fromstring(main_webpage).find_class('ov-100')[0]
 	update_html = html.fromstring(update_webpage)
 	support_html = html.fromstring(support_webpage)
 
@@ -19,6 +29,14 @@ async def check_wilds_info():
 	details_list += check_wilds_notice(main_html)
 	details_list += check_wilds_update(update_html)
 	details_list += check_wilds_support(support_html)
+
+
+	# TEMP
+	print(var_global.LATEST_WILDS_IMAGE)
+	print(var_global.LATEST_WILDS_NOTICE)
+	print(var_global.LATEST_WILDS_UPDATE)
+	print(var_global.LATEST_WILDS_SUPPORT)
+
 
 	# generate a dictionary which maps each category to its index position in INFO_MAPPING
 	order = {category: index for index, category in enumerate(INFO_MAPPING)}
@@ -35,19 +53,20 @@ async def check_wilds_info():
 def check_wilds_news(html_data):
 
 	# consolidate current news items
-	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	details_list = []
+	first_run = not var_global.LATEST_WILDS_IMAGE
+	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 
 	for item in item_list:
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 
 		# set latest news image on fresh startup
-		if not var_global.LATEST_WILDS_IMAGE:
-			var_global.LATEST_WILDS_IMAGE = image_link
-			return []
+		if first_run:
+			var_global.LATEST_WILDS_IMAGE.append(image_link)
+			continue
 
 		# break iteration once latest item is matched
-		elif image_link == var_global.LATEST_WILDS_IMAGE:
+		elif image_link in var_global.LATEST_WILDS_IMAGE:
 			break
 
 		details = {
@@ -73,7 +92,7 @@ def check_wilds_news(html_data):
 
 	# update tracking if new item appeared
 	if details_list:
-		var_global.LATEST_WILDS_IMAGE = details_list[0]['image_link']
+		var_global.LATEST_WILDS_IMAGE += [details['image_link'] for details in details_list]
 
 	return details_list
 
@@ -81,32 +100,27 @@ def check_wilds_news(html_data):
 # processes 'Important Notice' section of Wilds main page
 def check_wilds_notice(html_data):
 
-	# extract 'Important Notice' section
-	notice_block = html_data.get_element_by_id('ImportantNotice', None)
-
 	# skip if 'Important Notice' section is not present on webpage
-	if notice_block is None:
-		var_global.LATEST_WILDS_NOTICE = []
-		return []
+	if not (item_list := html_data.find_class('ImportantNotice_list')):
+		return item_list
 
 	# consolidate current notices
-	item_list = notice_block.find_class('ImportantNotice_list')[0].xpath('li/a')
 	details_list = []
+	first_run = not var_global.LATEST_WILDS_NOTICE
 
-	for item in item_list:
-
+	for item in item_list[0].xpath('li/a'):
 		# construct identifier string to 'mark' latest notice
 		date = item.xpath('dl/dt')[0].text_content().strip()
 		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
 		identifier = f"{date}|{caption}"
 
 		# set latest identifier on fresh startup
-		if not var_global.LATEST_WILDS_NOTICE:
-			var_global.LATEST_WILDS_NOTICE = identifier
-			return []
+		if first_run:
+			var_global.LATEST_WILDS_NOTICE.append(identifier)
+			continue
 
 		# break iteration once latest item is matched
-		elif identifier == var_global.LATEST_WILDS_NOTICE:
+		elif identifier in var_global.LATEST_WILDS_NOTICE:
 			break
 
 		details = {
@@ -130,7 +144,7 @@ def check_wilds_notice(html_data):
 
 	# update tracking if new item appeared
 	if details_list:
-		var_global.LATEST_WILDS_NOTICE = details_list[0]['identifier']
+		var_global.LATEST_WILDS_NOTICE += [details['identifier'] for details in details_list]
 
 	return details_list
 
@@ -139,19 +153,20 @@ def check_wilds_notice(html_data):
 def check_wilds_update(html_data):
 
 	# consolidate current patch notes
-	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
 	details_list = []
+	first_run = not var_global.LATEST_WILDS_UPDATE
+	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
 
 	for item in item_list:
 		article_link = urljoin(WILDS_UPDATE_URL, item.get('href'))
 
 		# set latest patch notes on fresh startup
-		if not var_global.LATEST_WILDS_UPDATE:
-			var_global.LATEST_WILDS_UPDATE = article_link
-			return []
+		if first_run:
+			var_global.LATEST_WILDS_UPDATE.append(article_link)
+			continue
 
 		# break iteration once latest item is matched
-		elif article_link == var_global.LATEST_WILDS_UPDATE:
+		elif article_link in var_global.LATEST_WILDS_UPDATE:
 			break
 
 		details = {
@@ -196,7 +211,7 @@ def check_wilds_update(html_data):
 
 	# update tracking if new item appeared
 	if details_list:
-		var_global.LATEST_WILDS_UPDATE = details_list[0]['article_link']
+		var_global.LATEST_WILDS_UPDATE += [details['article_link'] for details in details_list]
 
 	return details_list
 
@@ -209,19 +224,20 @@ def check_wilds_support(html_data):
 	article_timings = {faq['slug']: datetime.fromtimestamp(faq['date']) for faq in faq_data}
 
 	# consolidate current support articles
-	item_list = html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a')
 	details_list = []
+	first_run = not var_global.LATEST_WILDS_SUPPORT
+	item_list = html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a')
 
 	for item in item_list:
 		article_link = urljoin(WILDS_SUPPORT_URL, item.get('href'))
 
 		# set latest support article on fresh startup
-		if not var_global.LATEST_WILDS_SUPPORT:
-			var_global.LATEST_WILDS_SUPPORT = article_link
-			return []
+		if first_run:
+			var_global.LATEST_WILDS_SUPPORT.append(article_link)
+			continue
 
 		# break iteration once latest item is matched
-		elif article_link == var_global.LATEST_WILDS_SUPPORT:
+		elif article_link in var_global.LATEST_WILDS_SUPPORT:
 			break
 
 		details = {
@@ -248,6 +264,6 @@ def check_wilds_support(html_data):
 
 	# update tracking if new item appeared
 	if details_list:
-		var_global.LATEST_WILDS_SUPPORT = details_list[0]['article_link']
+		var_global.LATEST_WILDS_SUPPORT += [details['article_link'] for details in details_list]
 
 	return details_list
