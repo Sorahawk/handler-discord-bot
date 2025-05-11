@@ -137,17 +137,17 @@ WILDS_UPDATE_URL = 'https://info.monsterhunter.com/wilds/update/en-asia/'
 # URL for Wilds support articles webpage
 WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/category/_/platform/_/keyword/_/tag/_/order/modified/1'
 
-# URL string of the latest Wilds news image
-LATEST_WILDS_IMAGE = []
+# list of Wilds news articles
+WILDS_NEWS_LIST = []
 
-# string identifier to store the latest 'Important Notice' on Wilds main page; format is "<DATE>|<CAPTION>"
-LATEST_WILDS_NOTICE = []
+# list of 'Important Notices' on Wilds main page; format is "<DATE>|<CAPTION>"
+WILDS_NOTICE_LIST = []
 
-# URL string of the latest patch notes
-LATEST_WILDS_UPDATE = []
+# list of Wilds patch notes
+WILDS_UPDATE_LIST = []
 
-# URL string of the latest Wilds support article
-LATEST_WILDS_SUPPORT = []
+# list of Wilds support articles
+WILDS_SUPPORT_LIST = []
 
 
 # names and color codes for Info categories

@@ -80,12 +80,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 				key = ' '.join(key.split())
 				value = ' '.join(value.split())
 
-				# lower the key names and replace whitespace with underscore
-				key = key.lower().replace(' ', '_')
-
-				# remove only the preceding colon, but cannot use .replace() because the Start/End quest timings contain colons as well
-				value = value[1:]
-
-				details[key] = value
+				key = key.lower().replace(' ', '_')  # lower the key names and replace whitespace with underscore
+				details[key] = value.lstrip(':')  # remove the preceding colon
 
 			await send_quest_embed(details, channel)

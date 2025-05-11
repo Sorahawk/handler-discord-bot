@@ -48,8 +48,8 @@ async def send_news_embed(details, channel):
 		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
 	# additional fields for Support
-	elif 'labels' in details:
-		embed_msg.add_field(name='Categories', value=details['labels'], inline=False)
+	elif 'issue_cat' in details:
+		embed_msg.add_field(name='Categories', value=details['issue_cat'], inline=False)
 		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
 	if 'image_link' in details:
