@@ -4,19 +4,9 @@ from imports import *
 # checks for the latest info on Wilds
 async def check_wilds_info():
 	# retrieve webpage contents
-	# main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
-	# update_webpage = await make_get_request(WILDS_UPDATE_URL)
-	# support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
-
-
-	# TEMP
-	with open('wilds_main.html', encoding='utf-8') as infile:
-		main_webpage = '\n'.join(infile.readlines())
-	with open('wilds_patch.html', encoding='utf-8') as infile:
-		update_webpage = '\n'.join(infile.readlines())
-	with open('wilds_support.html', encoding='utf-8') as infile:
-		support_webpage = '\n'.join(infile.readlines())
-
+	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
+	update_webpage = await make_get_request(WILDS_UPDATE_URL)
+	support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
 
 	# process HTML data
 	main_html = html.fromstring(main_webpage).find_class('ov-100')[0]
@@ -29,14 +19,6 @@ async def check_wilds_info():
 	details_list += check_wilds_notice(main_html)
 	details_list += check_wilds_update(update_html)
 	details_list += check_wilds_support(support_html)
-
-
-	# TEMP
-	print(var_global.LATEST_WILDS_IMAGE)
-	print(var_global.LATEST_WILDS_NOTICE)
-	print(var_global.LATEST_WILDS_UPDATE)
-	print(var_global.LATEST_WILDS_SUPPORT)
-
 
 	# generate a dictionary which maps each category to its index position in INFO_MAPPING
 	order = {category: index for index, category in enumerate(INFO_MAPPING)}
