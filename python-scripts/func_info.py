@@ -21,7 +21,7 @@ async def check_wilds_info():
 	details_list += check_wilds_support(support_html)
 
 	# generate a dictionary which maps each category to its index position in INFO_MAPPING
-	order = {category: index for index, category in enumerate(INFO_MAPPING)}
+	order = { category: index for index, category in enumerate(INFO_MAPPING) }
 
 	# sort new items primarily by date, then subsequently by type
 	details_list = sorted(details_list, key=lambda item: (item["date"], order[item["category"]]))
@@ -191,7 +191,7 @@ def check_wilds_support(html_data):
 
 	# generate reference dict containing article timings
 	faq_data = json.loads(html_data.get_element_by_id('__NEXT_DATA__').text_content())['props']['pageProps']['faq_list']['faq_article_list']
-	article_timings = {faq['slug']: datetime.fromtimestamp(faq['date']) for faq in faq_data}
+	article_timings = { faq['slug']: datetime.fromtimestamp(faq['date']) for faq in faq_data }
 
 	item_list = html_data.find_class('Search_faqList___dcjt')[0].xpath('div/div/a')
 	for item in item_list:
