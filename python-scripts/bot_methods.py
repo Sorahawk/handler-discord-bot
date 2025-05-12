@@ -5,7 +5,7 @@ from imports import *
 # and must share the same name, followed by '_method'
 
 
-# help menu method
+# display weekly quests
 async def quest_method(message, user_input, flag_presence):
 	week_index = 0
 	if 'next' in user_input.lower():
@@ -16,7 +16,7 @@ async def quest_method(message, user_input, flag_presence):
 	await display_weekly_quests(message.channel, week_index=week_index, display_all=flag_presence['all'])
 
 
-# bot update method
+# trigger bot self-update
 async def update_method(message, user_input, flag_presence):
 	if sys.platform != 'linux':
 		return
