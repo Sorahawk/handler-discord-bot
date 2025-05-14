@@ -26,9 +26,11 @@ async def check_latest_news():
 			break
 
 		# register new item to list
-		var_global.MH_NEWS_LIST.append(identifier)
 		if first_run:
+			var_global.MH_NEWS_LIST.append(identifier)
 			continue
+		else:
+			var_global.MH_NEWS_LIST.insert(0, identifier)
 
 		details = {
 			'title_link': JAPANESE_NEWS_URL,
