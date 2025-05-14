@@ -48,9 +48,11 @@ def check_wilds_news(html_data):
 			break
 
 		# register new item to list
-		var_global.WILDS_NEWS_LIST.append(identifier)
 		if first_run:
+			var_global.WILDS_NEWS_LIST.append(identifier)
 			continue
+		else:
+			var_global.WILDS_NEWS_LIST.insert(0, identifier)
 
 		details = {
 			'category': (category := 'news'),
@@ -99,9 +101,11 @@ def check_wilds_notice(html_data):
 			break
 
 		# register new item to list
-		var_global.WILDS_NOTICE_LIST.append(identifier)
 		if first_run:
+			var_global.WILDS_NOTICE_LIST.append(identifier)
 			continue
+		else:
+			var_global.WILDS_NOTICE_LIST.insert(0, identifier)
 
 		details = {
 			'category': (category := 'notice'),
@@ -138,9 +142,11 @@ def check_wilds_update(html_data):
 			break
 
 		# register new item to list
-		var_global.WILDS_UPDATE_LIST.append(article_link)
 		if first_run:
+			var_global.WILDS_UPDATE_LIST.append(article_link)
 			continue
+		else:
+			var_global.WILDS_UPDATE_LIST.insert(0, article_link)
 
 		details = {
 			'category': (category := 'update'),
@@ -202,9 +208,11 @@ def check_wilds_support(html_data):
 			break
 
 		# register new item to list
-		var_global.WILDS_SUPPORT_LIST.append(article_link)
 		if first_run:
+			var_global.WILDS_SUPPORT_LIST.append(article_link)
 			continue
+		else:
+			var_global.WILDS_SUPPORT_LIST.insert(0, article_link)
 
 		details = {
 			'category': (category := 'support'),
