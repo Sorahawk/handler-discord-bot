@@ -42,11 +42,11 @@ def check_wilds_news(html_data):
 
 		# format date
 		date = item.find_class('news-item__ymd')[0].text_content().strip()
-		details['date'] = datetime.strptime(date, '%Y.%m.%d')
+		dt = datetime.strptime(date, '%Y.%m.%d')
 
 		# construct identifier string
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
-		formatted_date = format_identifier_date(details['date'])
+		formatted_date = format_identifier_date(dt)
 		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
@@ -63,6 +63,7 @@ def check_wilds_news(html_data):
 		details = {
 			'category': (category := 'news'),
 			'title_link': WILDS_MAIN_URL,
+			'date': dt,
 			'image_link': image_link
 		}
 
@@ -96,11 +97,11 @@ def check_wilds_notice(html_data):
 
 		# format date
 		date = item.xpath('dl/dt')[0].text_content().strip()
-		details['date'] = datetime.strptime(date, '%B %d, %Y')
+		dt = datetime.strptime(date, '%B %d, %Y')
 
 		# construct identifier string
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
-		formatted_date = format_identifier_date(details['date'])
+		formatted_date = format_identifier_date(dt)
 		identifier = f"{formatted_date}|{article_link}"
 
 		# break iteration once any registered item is matched
@@ -116,7 +117,8 @@ def check_wilds_notice(html_data):
 
 		details = {
 			'category': (category := 'notice'),
-			'title_link': WILDS_MAIN_URL
+			'title_link': WILDS_MAIN_URL,
+			'date': dt
 		}
 
 		# set title and color code

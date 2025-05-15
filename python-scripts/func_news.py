@@ -17,11 +17,11 @@ async def check_latest_news():
 
 		# format date
 		date = article.find_class('date')[0].text_content().strip()
-		details['date'] = datetime.strptime(date, '%Y.%m.%d')
+		dt = datetime.strptime(date, '%Y.%m.%d')
 
 		# construct identifier string
 		image_link = article.xpath('li/figure/img')[0].get('src')
-		formatted_date = format_identifier_date(details['date'])
+		formatted_date = format_identifier_date(dt)
 		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
@@ -37,7 +37,8 @@ async def check_latest_news():
 
 		details = {
 			'title_link': JAPANESE_NEWS_URL,
-			'image_link': image_link
+			'image_link': image_link,
+			'date': dt
 		}
 
 		# set title and color code
