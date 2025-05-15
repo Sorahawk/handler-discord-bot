@@ -19,10 +19,10 @@ async def quest_method(message, user_input, flag_presence):
 # display current state of article feeds
 async def status_method(message, user_input, flag_presence):
 	status_list = [
-		"WILDS_NEWS_LIST",
 		"WILDS_NOTICE_LIST",
-		"WILDS_UPDATE_LIST",
 		"WILDS_SUPPORT_LIST",
+		"WILDS_UPDATE_LIST",
+		"WILDS_NEWS_LIST",
 		"MH_NEWS_LIST",
 	]
 
