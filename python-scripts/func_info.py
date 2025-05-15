@@ -93,8 +93,8 @@ def check_wilds_notice(html_data):
 	for item in item_list[0].xpath('li/a'):
 		# construct identifier string
 		date = item.xpath('dl/dt')[0].text_content().strip()
-		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
-		identifier = f"{date}|{caption}"
+		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
+		identifier = f"{date}|{article_link}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NOTICE_LIST:
@@ -116,7 +116,7 @@ def check_wilds_notice(html_data):
 		details['title'], details['color_code'] = INFO_MAPPING[category]
 
 		# set description
-		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
+		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
 		details['description'] = f"[{caption}]({article_link})"
 
 		# format date
