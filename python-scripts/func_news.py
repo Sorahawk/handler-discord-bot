@@ -3,23 +3,26 @@ from imports import *
 
 # checks for the latest news article s
 async def check_latest_news():
+
 	# retrieve webpage contents via proxy because `www` subdomain seems to be stricter than `info`
 	news_webpage = await make_get_request(JAPANESE_NEWS_URL, use_proxy=True)
-
-	# process HTML data
 	html_data = html.fromstring(news_webpage)
-	news_list = html_data.find_class('mhNews_list')[0]
 
-	# check for new articles
 	details_list = []
 	first_run = not var_global.MH_NEWS_LIST
 	translator = googletrans.Translator()
 
+	news_list = html_data.find_class('mhNews_list')[0]
 	for article in news_list:
-		# construct identifier string
+
+		# format date
 		date = article.find_class('date')[0].text_content().strip()
+		details['date'] = datetime.strptime(date, '%Y.%m.%d')
+
+		# construct identifier string
 		image_link = article.xpath('li/figure/img')[0].get('src')
-		identifier = f"{date}|{image_link}"
+		formatted_date = format_identifier_date(details['date'])
+		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.MH_NEWS_LIST:
@@ -47,10 +50,6 @@ async def check_latest_news():
 		caption = (await translator.translate(caption_jap, src='ja', dest='en')).text
 		article_link = article.get('href')
 		details['description'] = f"[{caption}]({article_link})"
-
-		# format date
-		input_format = '%Y.%m.%d'
-		details['date'] = datetime.strptime(date, input_format)
 
 		details_list.append(details)
 

@@ -3,6 +3,7 @@ from imports import *
 
 # checks for the latest info on Wilds
 async def check_wilds_info():
+
 	# retrieve webpage contents
 	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
 	update_webpage = await make_get_request(WILDS_UPDATE_URL)
@@ -38,10 +39,15 @@ def check_wilds_news(html_data):
 
 	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	for item in item_list:
-		# construct identifier string
+
+		# format date
 		date = item.find_class('news-item__ymd')[0].text_content().strip()
+		details['date'] = datetime.strptime(date, '%Y.%m.%d')
+
+		# construct identifier string
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
-		identifier = f"{date}|{image_link}"
+		formatted_date = format_identifier_date(details['date'])
+		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NEWS_LIST:
@@ -68,10 +74,6 @@ def check_wilds_news(html_data):
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
 		details['description'] = f"[{caption}]({article_link})"
 
-		# format date
-		input_format = '%Y.%m.%d'
-		details['date'] = datetime.strptime(date, input_format)
-
 		details_list.append(details)
 
 	return details_list
@@ -91,10 +93,15 @@ def check_wilds_notice(html_data):
 		return item_list
 
 	for item in item_list[0].xpath('li/a'):
-		# construct identifier string
+
+		# format date
 		date = item.xpath('dl/dt')[0].text_content().strip()
+		details['date'] = datetime.strptime(date, '%B %d, %Y')
+
+		# construct identifier string
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
-		identifier = f"{date}|{article_link}"
+		formatted_date = format_identifier_date(details['date'])
+		identifier = f"{formatted_date}|{article_link}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NOTICE_LIST:
@@ -118,10 +125,6 @@ def check_wilds_notice(html_data):
 		# set description
 		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
 		details['description'] = f"[{caption}]({article_link})"
-
-		# format date
-		input_format = '%B %d, %Y'
-		details['date'] = datetime.strptime(date, input_format)
 
 		details_list.append(details)
 

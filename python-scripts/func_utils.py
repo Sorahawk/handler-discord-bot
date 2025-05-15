@@ -37,6 +37,11 @@ def check_flags(user_input):
 	return flag_presence, user_input
 
 
+# converts a datetime object into a formatted string to be used in identifier strings
+def format_identifier_date(dt):
+	return dt.strftime('%y%m%d')
+
+
 # makes a GET request using globally-declared httpx.AsyncClient()
 # usage of proxy required when hitting www.monsterhunter.com; VPN alone unable to bypass, unlike for info.monsterhunter.com
 async def make_get_request(url, use_proxy=False, get_content=False):
