@@ -6,7 +6,7 @@ async def check_wilds_info():
 
 	# retrieve webpage contents
 	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
-	update_webpage = await make_get_request(WILDS_UPDATE_URL)
+	update_webpage = await make_get_request(WILDS_UPDATE_URL, use_proxy=True)
 	support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
 
 	# process HTML data
