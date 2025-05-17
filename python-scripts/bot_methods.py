@@ -50,13 +50,12 @@ async def vpn_method(message, user_input, flag_presence):
 		return
 
 	# start/stop VPN service
-	if 'start' in user_input.lower():
-		keyword = 'start'
-		reply = 'Ghillie Mantle equipped. Shhh, quietly now...'
+	action_messages = {
+		'start': 'Ghillie Mantle equipped. Shhh, quietly now...',
+		'stop': 'Ghillie Mantle unequipped. Be careful!',
+	}
 
-	elif 'stop' in user_input.lower():
-		keyword = 'stop'
-		reply = 'Ghillie Mantle unequipped. Be careful!'
-
-	await message.channel.send(reply)
-	subprocess.run(f"sudo systemctl {keyword} {VPN_SERVICE}", shell=True)
+	for action, string_message in action_messages:
+		if action in user_input.lower():
+			await message.channel.send(string_message)
+			return subprocess.run(f"sudo systemctl {action} {VPN_SERVICE}", shell=True)
