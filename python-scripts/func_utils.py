@@ -47,6 +47,11 @@ def format_identifier_date(dt):
 async def make_get_request(url, use_proxy=False, get_content=False):
 	client = var_global.ASYNC_CLIENT_PROXY if use_proxy else var_global.ASYNC_CLIENT
 	response = await client.get(url, headers=STANDARD_HEADERS)
+
+	# check if CloudFront blocked the request, indicating that the VPN is inactive
+	if 'error from cloudfront' in response.headers.get('X-Cache', '').lower():
+		raise Exception('CloudFront blocked request. Verify VPN connection is active.')
+
 	return response.content if get_content else response.text
 
 
