@@ -42,3 +42,21 @@ async def update_method(message, user_input, flag_presence):
 
 	# restart service
 	subprocess.run(f"sudo systemctl restart {LINUX_SERVICE_NAME}", shell=True)
+
+
+# start/stop VPN connection on VM
+async def vpn_method(message, user_input, flag_presence):
+	if sys.platform != 'linux':
+		return
+
+	# start/stop VPN service
+	if 'start' in user_input.lower():
+		keyword = 'start'
+		reply = 'Ghillie Mantle equipped. Shhh, quietly now...'
+
+	elif 'stop' in user_input.lower()
+		keyword = 'stop'
+		reply = 'Ghillie Mantle unequipped. Be careful!'
+
+	subprocess.run(f"sudo systemctl {keyword} {VPN_SERVICE}")
+	await message.channel.send()

@@ -45,7 +45,7 @@ NOTIFY_ROLE_NAME = '<@&1097703521886941274>'
 BOT_COMMAND_PREFIX = '.'
 
 # list of bot commands
-BOT_COMMAND_LIST = ['quest', 'status', 'update']
+BOT_COMMAND_LIST = ['quest', 'status', 'update', 'vpn']
 
 # dictionary of command flags
 # each flag can only be a single letter
@@ -76,7 +76,10 @@ BOT_ACTIVITY_STATUSES = {
 
 
 
-### HTTP ###
+### NETWORK ###
+
+# name of VPN service
+VPN_SERVICE = 'openvpn-client@surfshark-sg-udp.service'
 
 # proxy URL to route web traffic through
 PROXY_URL = 'http://gw.dataimpulse.com:823'
