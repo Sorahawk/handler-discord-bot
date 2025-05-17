@@ -41,7 +41,7 @@ async def update_method(message, user_input, flag_presence):
 	subprocess.run(f"cd {LINUX_ABSOLUTE_PATH} && git reset --hard HEAD && git clean -d -f && git pull", shell=True)
 
 	# restart service
-	subprocess.run(f"sudo systemctl restart {LINUX_SERVICE_NAME}", shell=True)
+	subprocess.run(['sudo', 'systemctl', 'restart', LINUX_SERVICE_NAME])
 
 
 # start/stop VPN connection on VM
@@ -58,4 +58,4 @@ async def vpn_method(message, user_input, flag_presence):
 	for action, string_message in action_messages.items():
 		if action in user_input.lower():
 			await message.channel.send(string_message)
-			return subprocess.run(f"sudo systemctl {action} {VPN_SERVICE}", shell=True)
+			return subprocess.run(['sudo', 'systemctl', action, VPN_SERVICE])
