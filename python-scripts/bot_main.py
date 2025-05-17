@@ -78,8 +78,8 @@ async def on_ready():
 	proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
 	proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
 
-	var_global.ASYNC_CLIENT = httpx.AsyncClient(timeout=60, http2=True)
-	var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(timeout=60, proxy=proxy_auth_url)
+	var_global.ASYNC_CLIENT = httpx.AsyncClient(timeout=30, http2=True)
+	var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(timeout=30, proxy=proxy_auth_url)
 
 	# start tasks
 	task_rotate_status.start()
