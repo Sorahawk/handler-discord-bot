@@ -54,7 +54,7 @@ async def vpn_method(message, user_input, flag_presence):
 		keyword = 'start'
 		reply = 'Ghillie Mantle equipped. Shhh, quietly now...'
 
-	elif 'stop' in user_input.lower()
+	elif 'stop' in user_input.lower():
 		keyword = 'stop'
 		reply = 'Ghillie Mantle unequipped. Be careful!'
 
