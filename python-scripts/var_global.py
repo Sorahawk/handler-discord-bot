@@ -34,9 +34,6 @@ NEWS_CHANNEL_ID = 1356173681369415871
 # ID of Discord server channel to send Wilds info notifications
 INFO_CHANNEL_ID = 1365653663238066207
 
-# Discord server role name to ping for notifications
-NOTIFY_ROLE_NAME = '<@&1097703521886941274>'
-
 
 
 ### MAIN ###
