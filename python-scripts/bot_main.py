@@ -69,6 +69,9 @@ async def on_ready():
 
 	print(f"{bot.user} is online.\n")
 
+	# ensure VPN is active
+	await vpn_method(message=None, user_input='start', flag_presence=None)
+
 	# initialise global channel objects
 	var_global.INFO_CHANNEL = bot.get_channel(INFO_CHANNEL_ID)
 	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
