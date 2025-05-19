@@ -74,25 +74,18 @@ async def on_ready():
 	var_global.NEWS_CHANNEL = bot.get_channel(NEWS_CHANNEL_ID)
 	var_global.QUEST_CHANNEL = bot.get_channel(QUEST_CHANNEL_ID)
 
-	try:
-		# ensure VPN is active
-		await vpn_method(message=None, user_input='start', flag_presence=None)
+	# initialise HTTP async clients
+	proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
+	proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
 
-		# initialise HTTP async clients
-		proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
-		proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
+	var_global.ASYNC_CLIENT = httpx.AsyncClient(http2=True)
+	var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(timeout=60, proxy=proxy_auth_url)
 
-		var_global.ASYNC_CLIENT = httpx.AsyncClient(http2=True)
-		var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(timeout=60, proxy=proxy_auth_url)
-
-		# start tasks
-		task_rotate_status.start()
-		task_check_wilds_info.start()
-		task_check_latest_news.start()
-		task_display_weekly_quests.start()
-
-	except Exception as e:
-		await send_traceback(e, var_global.NEWS_CHANNEL)
+	# start tasks
+	task_rotate_status.start()
+	task_check_wilds_info.start()
+	task_check_latest_news.start()
+	task_display_weekly_quests.start()
 
 
 @bot.event
