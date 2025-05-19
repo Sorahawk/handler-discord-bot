@@ -57,6 +57,5 @@ async def vpn_method(message, user_input, flag_presence):
 
 	for action, string_message in action_messages.items():
 		if action in user_input.lower():
-			if message:
-				await message.channel.send(string_message)
+			await message.channel.send(string_message)
 			return subprocess.run(['sudo', 'systemctl', action, VPN_SERVICE])
