@@ -27,7 +27,7 @@ async def status_method(message, user_input, flag_presence):
 	]
 
 	status_log = '\n\n'.join(f"{name}: {json.dumps(getattr(var_global, name), indent=4)}" for name in status_list)
-	await message.channel.send(file=discord.File(io.StringIO(status_log), filename="status_log.txt"))
+	await message.channel.send(file=generate_file(status_log, 'status_log.txt'))
 
 
 # trigger bot self-update

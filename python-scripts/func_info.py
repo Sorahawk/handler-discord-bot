@@ -47,7 +47,7 @@ def check_wilds_news(html_data):
 		# construct identifier string
 		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 		formatted_date = format_identifier_date(dt)
-		identifier = f"{formatted_date}|{image_link}"
+		identifier = f'{formatted_date}|{image_link}'
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NEWS_LIST:
@@ -73,7 +73,7 @@ def check_wilds_news(html_data):
 		# set description
 		caption = ' '.join(item.find_class('news-item__text')[0].text_content().split())
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
-		details['description'] = f"[{caption}]({article_link})"
+		details['description'] = f'[{caption}]({article_link})'
 
 		details_list.append(details)
 
@@ -102,7 +102,7 @@ def check_wilds_notice(html_data):
 		# construct identifier string
 		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
 		formatted_date = format_identifier_date(dt)
-		identifier = f"{formatted_date}|{article_link}"
+		identifier = f'{formatted_date}|{article_link}'
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NOTICE_LIST:
@@ -126,7 +126,7 @@ def check_wilds_notice(html_data):
 
 		# set description
 		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
-		details['description'] = f"[{caption}]({article_link})"
+		details['description'] = f'[{caption}]({article_link})'
 
 		details_list.append(details)
 
@@ -163,7 +163,7 @@ def check_wilds_update(html_data):
 
 		# set description
 		version_number = ' '.join(item.find_class('latest_update_list_ver')[0].text_content().split())
-		details['description'] = f"**[{version_number}]({article_link})**"
+		details['description'] = f'**[{version_number}]({article_link})**'
 
 		# format date
 
@@ -229,7 +229,7 @@ def check_wilds_support(html_data):
 
 		# set description
 		caption = item.xpath('div/p')[0].text_content().strip()
-		details['description'] = f"[{caption}]({article_link})"
+		details['description'] = f'[{caption}]({article_link})'
 
 		# format date
 		article_id = article_link.split('/')[-1]

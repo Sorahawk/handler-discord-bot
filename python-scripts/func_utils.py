@@ -37,6 +37,11 @@ def check_flags(user_input):
 	return flag_presence, user_input
 
 
+# returns a Discord File object
+def generate_file(content, filename):
+	return discord.File(io.StringIO(content), filename=filename)
+
+
 # converts a datetime object into a formatted string to be used in identifier strings
 def format_identifier_date(dt):
 	return dt.strftime('%y%m%d')
@@ -58,4 +63,4 @@ async def make_get_request(url, use_proxy=False, get_content=False):
 # obtains full traceback of given exception and outputs to specified channel
 async def send_traceback(e, channel):
 	full_trace = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
-	await channel.send(e, file=discord.File(io.StringIO(full_trace), filename="traceback.txt"))
+	await channel.send(e, file=generate_file(full_trace, 'traceback.txt'))
