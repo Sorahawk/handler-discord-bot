@@ -22,7 +22,7 @@ async def check_latest_news():
 		# construct identifier string
 		image_link = article.xpath('li/figure/img')[0].get('src')
 		formatted_date = format_identifier_date(dt)
-		identifier = f'{formatted_date}|{image_link}'
+		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.MH_NEWS_LIST:
@@ -44,13 +44,13 @@ async def check_latest_news():
 		# set title and color code
 		category_class = article.find_class('category')[0].get('class').replace('category', '').strip()
 		category, details['color_code'] = NEWS_MAPPING[category_class]
-		details['title'] = f'News ({category})'
+		details['title'] = f"News ({category})"
 
 		# set description
 		caption_jap = article.find_class('text')[0].text_content().strip()
 		caption = (await translator.translate(caption_jap, src='ja', dest='en')).text
 		article_link = article.get('href')
-		details['description'] = f'[{caption}]({article_link})'
+		details['description'] = f"[{caption}]({article_link})"
 
 		details_list.append(details)
 

@@ -22,7 +22,7 @@ async def send_quest_embed(quest_details, channel):
 
 	# format dates
 	input_format = '%m.%d.%Y %H:%M'
-	output_format = f'%a, %{UNPADDED_SYMBOL}d %b, %{UNPADDED_SYMBOL}I:%M %p'
+	output_format = f"%a, %{UNPADDED_SYMBOL}d %b, %{UNPADDED_SYMBOL}I:%M %p"
 	start_date = datetime.strptime(quest_details['start_date_and_time'], input_format).strftime(output_format)
 	end_date = datetime.strptime(quest_details['end_date_and_time'], input_format).strftime(output_format)
 
@@ -38,7 +38,7 @@ async def send_quest_embed(quest_details, channel):
 async def send_news_embed(details, channel):
 	embed_msg = discord.Embed(title=details['title'], url=details['title_link'], description=details['description'], color=details['color_code'])
 
-	output_format = f'%A, %{UNPADDED_SYMBOL}d %B %Y'
+	output_format = f"%A, %{UNPADDED_SYMBOL}d %B %Y"
 	embed_msg.set_footer(text=details['date'].strftime(output_format))
 
 	# additional fields for Update

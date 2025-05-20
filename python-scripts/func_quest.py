@@ -16,7 +16,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 
 	# format start and end dates
 	input_format = '%m.%d.%Y'
-	output_format = f'%{UNPADDED_SYMBOL}d %B'
+	output_format = f"%{UNPADDED_SYMBOL}d %B"
 	start_date = datetime.strptime(dates[0], input_format).strftime(output_format)
 	end_date = datetime.strptime(dates[-1], input_format).strftime(output_format)
 
@@ -40,7 +40,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 		# get category type (integer) and name
 		# there seems to be 1 to 4 based on website data
 		table_int = quest_category.get('class')[-1]
-		category_name = quest_table.find_class(f'tableTitle type{table_int}')[0].text_content().strip()[:-1]
+		category_name = quest_table.find_class(f"tableTitle type{table_int}")[0].text_content().strip()[:-1]
 
 		for quest in quest_category.xpath('tbody/tr'):
 

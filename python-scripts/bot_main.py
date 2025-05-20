@@ -76,7 +76,7 @@ async def on_ready():
 
 	# initialise HTTP async clients
 	proxy_protocol, proxy_domain_port = PROXY_URL.split('//')
-	proxy_auth_url = f'{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}'
+	proxy_auth_url = f"{proxy_protocol}//{PROXY_USERNAME}:{PROXY_PASSWORD}@{proxy_domain_port}"
 
 	var_global.ASYNC_CLIENT = httpx.AsyncClient(http2=True)
 	var_global.ASYNC_CLIENT_PROXY = httpx.AsyncClient(timeout=60, proxy=proxy_auth_url)
