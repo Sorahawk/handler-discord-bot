@@ -58,4 +58,4 @@ async def make_get_request(url, use_proxy=False, get_content=False):
 # obtains full traceback of given exception and outputs to specified channel
 async def send_traceback(e, channel):
 	full_trace = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
-	await channel.send(file=discord.File(io.StringIO(full_trace), filename="traceback.txt"))
+	await channel.send(e, file=discord.File(io.StringIO(full_trace), filename="traceback.txt"))
