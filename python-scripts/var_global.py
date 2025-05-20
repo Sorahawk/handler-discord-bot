@@ -38,6 +38,13 @@ INFO_CHANNEL_ID = 1365653663238066207
 
 ### MAIN ###
 
+# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero-padded items
+# automatically switch between '#' for Windows and '-' for Linux
+if sys.platform == 'linux':
+	UNPADDED_SYMBOL = '-'
+else:
+	UNPADDED_SYMBOL = '#'
+
 # symbol to signify bot commands
 BOT_COMMAND_PREFIX = '.'
 
@@ -48,12 +55,8 @@ BOT_COMMAND_LIST = ['quest', 'status', 'update', 'vpn']
 # each flag can only be a single letter
 BOT_COMMAND_FLAGS = { 'all': 'a' }
 
-# datetime.strftime formatting has different symbols being used between Windows and Linux for non-zero-padded items
-# automatically switch between '#' for Windows and '-' for Linux
-if sys.platform == 'linux':
-	UNPADDED_SYMBOL = '-'
-else:
-	UNPADDED_SYMBOL = '#'
+# string reply when bot receives update command
+BOT_UPDATE_VOICELINE = 'Popping into the tent for a bit!'
 
 
 # dictionary of the available Discord statuses for the bot
