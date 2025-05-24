@@ -68,3 +68,11 @@ async def send_traceback(e, channel):
 		await channel.send(full_trace)
 	else:
 		await channel.send(e, file=generate_file(full_trace, 'traceback.txt'))
+
+
+# run specified function wrapped in a try-except block for error handling
+async def safe_execute(function, channel):
+	try:
+		await function()
+	except Exception as e:
+		await send_traceback(e, channel)
