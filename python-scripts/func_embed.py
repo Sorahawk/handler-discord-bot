@@ -5,9 +5,9 @@ from imports import *
 # Thus, obtain image data to pass into Discord directly
 async def add_embed_image(image_link, embed_msg, use_proxy=False):
 	image_data = await make_get_request(image_link, use_proxy, get_content=True)
-	image_file = discord.File(io.BytesIO(image_data), filename="image.jpg")
+	image_file = discord.File(io.BytesIO(image_data), filename="embed_image.jpg")
 
-	embed_msg.set_image(url="attachment://image.jpg")
+	embed_msg.set_image(url="attachment://embed_image.jpg")
 	return embed_msg, image_file
 
 
