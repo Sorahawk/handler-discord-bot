@@ -45,8 +45,8 @@ def check_wilds_news(html_data):
 		dt = datetime.strptime(date, '%Y.%m.%d')
 
 		# construct identifier string
-		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 		formatted_date = format_identifier_date(dt)
+		image_link = urljoin(WILDS_MAIN_URL, item.xpath('div/p/img')[0].get('src'))
 		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched
@@ -93,16 +93,16 @@ def check_wilds_notice(html_data):
 
 		return item_list
 
-	for item in item_list[0].xpath('li/a'):
+	for item in item_list[0].xpath('li/a | li/div'):
 
 		# format date
 		date = item.xpath('dl/dt')[0].text_content().strip()
 		dt = datetime.strptime(date, '%B %d, %Y')
 
 		# construct identifier string
-		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
 		formatted_date = format_identifier_date(dt)
-		identifier = f"{formatted_date}|{article_link}"
+		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
+		identifier = f"{formatted_date}|{caption}"
 
 		# break iteration once any registered item is matched
 		if identifier in var_global.WILDS_NOTICE_LIST:
@@ -125,7 +125,10 @@ def check_wilds_notice(html_data):
 		details['title'], details['color_code'] = INFO_MAPPING[category]
 
 		# set description
-		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
+		article_link = urljoin(WILDS_MAIN_URL, item.get('href'))
+		if not article_link:  # set article link to main page if notice doesn't redirect to a separate page
+			article_link = details['title_link']
+
 		details['description'] = f"[{caption}]({article_link})"
 
 		details_list.append(details)

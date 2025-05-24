@@ -140,7 +140,7 @@ WILDS_SUPPORT_URL = 'https://www.monsterhunter.com/support/wilds/en/faq/search/c
 # list of Wilds news articles; identifier is "YYMMDD|IMAGE_LINK"
 WILDS_NEWS_LIST = []
 
-# list of 'Important Notices' on Wilds main page; identifier is "YYMMDD|ARTICLE_LINK"
+# list of 'Important Notices' on Wilds main page; identifier is "YYMMDD|CAPTION"
 WILDS_NOTICE_LIST = []
 
 # list of Wilds patch notes; identifier is ARTICLE_LINK

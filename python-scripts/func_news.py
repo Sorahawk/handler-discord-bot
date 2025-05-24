@@ -20,8 +20,8 @@ async def check_latest_news():
 		dt = datetime.strptime(date, '%Y.%m.%d')
 
 		# construct identifier string
-		image_link = article.xpath('li/figure/img')[0].get('src')
 		formatted_date = format_identifier_date(dt)
+		image_link = article.xpath('li/figure/img')[0].get('src')
 		identifier = f"{formatted_date}|{image_link}"
 
 		# break iteration once any registered item is matched

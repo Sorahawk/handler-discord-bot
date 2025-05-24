@@ -25,13 +25,13 @@ async def task_rotate_status():
 # poll for Wilds info every hour
 @loop(hours=1)
 async def task_check_wilds_info():
-	safe_execute(check_wilds_info, var_global.INFO_CHANNEL)
+	await safe_execute(check_wilds_info, var_global.INFO_CHANNEL)
 
 
 # poll for news every hour
 @loop(hours=1)
 async def task_check_latest_news():
-	safe_execute(check_latest_news, var_global.NEWS_CHANNEL)
+	await safe_execute(check_latest_news, var_global.NEWS_CHANNEL)
 
 
 # display new weekly quests every Wednesday at 8.01am SGT
