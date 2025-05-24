@@ -54,11 +54,11 @@ async def update_method(message, user_input, flag_presence):
 
 	if 'now' not in user_input.lower():
 		# poll sites before restarting
+		await message.channel.send("Just a minute, let me see if we've received any news from the Guild.")
 		await safe_execute(check_wilds_info, var_global.INFO_CHANNEL)
 		await safe_execute(check_latest_news, var_global.NEWS_CHANNEL)
-		await status_method(message, user_input, flag_presence)
 
-	await message.channel.send('Popping into the tent for a bit!')
+	await message.channel.send("Popping into the tent for a bit!")
 
 	# reset any potential changes to project folder, then pull latest code
 	subprocess.run(f"cd {LINUX_ABSOLUTE_PATH} && git reset --hard HEAD && git clean -d -f && git pull", shell=True)
