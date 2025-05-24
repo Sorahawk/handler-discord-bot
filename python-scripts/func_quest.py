@@ -27,13 +27,8 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 		await channel.send(f"I'm still awaiting correspondence from the Guild regarding authorised hunts for the week of **{start_date}** to **{end_date}**.\n\nTry checking back again in a few days!")
 		return
 
-	# display message containing start and end dates of specified week
-	if display_all:
-		await channel.send(f"From **{start_date}** to **{end_date}**, the Guild has authorised all of the following hunts!")
-	else:
-		await channel.send(f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!")
-
-	# display quests
+	# process quest list
+	details_list = []
 	for quest_category in quest_table.xpath('table'):
 
 		# get category type (integer) and name
@@ -82,4 +77,20 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 				key = key.lower().replace(' ', '_')  # lower the key names and replace whitespace with underscore
 				details[key] = value.lstrip(':')  # remove the preceding colon
 
-			await send_quest_embed(details, channel)
+			details_list.append(details)
+
+	# there are times when a given week may not have any new quests
+	# in that case, and if 'all' flag is not present, details_list will be empty
+	if not details_list:
+		await channel.send(f"There are no new hunts for the week of **{start_date}** to **{end_date}**.")
+		return
+
+	# display message containing start and end dates of specified week
+	if display_all:
+		await channel.send(f"From **{start_date}** to **{end_date}**, the Guild has authorised all of the following hunts!")
+	else:
+		await channel.send(f"The Guild has authorised these new hunts from **{start_date}** to **{end_date}**!")
+
+	# send out quest embeds
+	for details in details_list:
+		await send_quest_embed(details, channel)
