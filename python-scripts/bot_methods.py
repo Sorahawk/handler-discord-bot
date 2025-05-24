@@ -37,8 +37,8 @@ async def vpn_method(message, user_input, flag_presence):
 
 	# start/stop VPN service
 	action_messages = {
-		'start': 'Ghillie Mantle equipped. Shhh, quietly now...',
-		'stop': 'Ghillie Mantle unequipped. Be careful!',
+		'start': "Ghillie Mantle equipped. Shhh, quietly now...",
+		'stop': "Ghillie Mantle unequipped. Be careful!",
 	}
 
 	for action, string_message in action_messages.items():

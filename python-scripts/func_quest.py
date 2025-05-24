@@ -24,8 +24,7 @@ async def display_weekly_quests(channel, week_index=0, display_all=False):
 	quest_table = html_data.find_class('tableArea')[week_index]
 
 	if quest_table.find_class('coming-quest'):
-		no_info_msg = f"I'm still awaiting correspondence from the Guild regarding authorised hunts for the week of **{start_date}** to **{end_date}**.\n\nTry checking back again in a few days!"
-		await channel.send(no_info_msg)
+		await channel.send(f"I'm still awaiting correspondence from the Guild regarding authorised hunts for the week of **{start_date}** to **{end_date}**.\n\nTry checking back again in a few days!")
 		return
 
 	# display message containing start and end dates of specified week

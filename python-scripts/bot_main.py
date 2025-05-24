@@ -44,8 +44,7 @@ async def task_display_weekly_quests():
 		if datetime.now(tz).weekday() != 2:  # only proceed on Wednesdays
 			return
 
-		greeting_msg = f"Greetings, Hunters! It's the start of a new week!"
-		await var_global.QUEST_CHANNEL.send(greeting_msg)
+		await var_global.QUEST_CHANNEL.send(f"Greetings, Hunters! It's the start of a new week!")
 		await display_weekly_quests(var_global.QUEST_CHANNEL, display_all=True)
 
 	except Exception as e:
