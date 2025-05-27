@@ -56,8 +56,11 @@ async def make_get_request(url, get_content=False, ignore_cloudfront=False):
 	response = await client.get(url, headers=STANDARD_HEADERS)
 
 	# check if CloudFront blocked the request, indicating that the VPN is inactive
-	if not ignore_cloudfront and 'error from cloudfront' in response.headers.get('X-Cache', '').lower():
-		raise Exception("HTTP request blocked by CloudFront. Verify VPN connection is active.")
+	if 'error from cloudfront' in response.headers.get('X-Cache', '').lower():
+		if ignore_cloudfront:
+			response = await var_global.ASYNC_CLIENT_PROXY.get(url, headers=STANDARD_HEADERS)
+		else:
+			raise Exception("HTTP request blocked by CloudFront. Verify VPN connection is active.")
 
 	return response.content if get_content else response.text
 
