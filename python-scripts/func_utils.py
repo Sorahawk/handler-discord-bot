@@ -67,7 +67,7 @@ async def send_traceback(e, channel):
 	full_trace = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
 
 	if len(full_trace) <= 2000:
-		await channel.send(full_trace)
+		await channel.send(f"```{full_trace}```")
 	else:
 		await channel.send(e, file=generate_file(full_trace, 'traceback.txt'))
 
