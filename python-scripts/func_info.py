@@ -39,7 +39,6 @@ def check_wilds_news(html_data):
 
 	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	for item in item_list:
-
 		# format date
 		date = item.find_class('news-item__ymd')[0].text_content().strip()
 		dt = datetime.strptime(date, '%Y.%m.%d')
@@ -88,13 +87,13 @@ def check_wilds_notice(html_data):
 	# skip if 'Important Notice' section is not present on webpage
 	if not (item_list := html_data.find_class('ImportantNotice_list')):
 		if first_run:
+
 			# insert a value into the list so first_run will be False in subsequent runs
 			var_global.WILDS_NOTICE_LIST.append('')
 
-		return item_list
+		return []
 
 	for item in item_list[0].xpath('li/a | li/div'):
-
 		# format date
 		date = item.xpath('dl/dt')[0].text_content().strip()
 		dt = datetime.strptime(date, '%B %d, %Y')
@@ -141,8 +140,11 @@ def check_wilds_update(html_data):
 	details_list = []
 	first_run = not var_global.WILDS_UPDATE_LIST
 
-	item_list = html_data.find_class('latest_update')[0].xpath('li/a')
-	for item in item_list:
+	# ignore if VPN is down and patch notes cannot be retrieved
+	if not (item_list := html_data.find_class('latest_update')):
+		return []
+
+	for item in item_list[0].xpath('li/a'):
 		article_link = urljoin(WILDS_UPDATE_URL, item.get('href'))
 
 		# break iteration once any registered item is matched
