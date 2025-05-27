@@ -53,8 +53,11 @@ async def send_news_embed(details, channel):
 		embed_msg.add_field(name='Categories', value=details['issue_cat'], inline=False)
 		embed_msg.add_field(name='Platforms', value=details['platforms'], inline=False)
 
-	if 'image_link' in details:
-		embed_msg, image_file = await add_embed_image(details['image_link'], embed_msg, use_proxy=True)
-		await channel.send(embed=embed_msg, file=image_file)
-	else:
-		await channel.send(embed=embed_msg)
+	image_file = None
+
+	if (link := details.get('image_link')):
+		embed_msg, image_file = await add_embed_image(link, embed_msg, use_proxy=True)
+	elif (link := details.get('thumbnail_link')):
+		embed_msg, image_file = await add_embed_image(link, embed_msg, is_thumbnail=True, use_proxy=True)
+
+	await channel.send(embed=embed_msg, file=image_file)
