@@ -180,7 +180,7 @@ def check_wilds_update(html_data):
 
 		# extract image if present
 		if (image := item.find_class('latest_update_list_thumb')):
-			details['image_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
+			details['thumbnail_link'] = urljoin(WILDS_UPDATE_URL, image[0].xpath('img')[0].get('src'))
 
 		# extract patch description
 		update_details = item.find_class('latest_update_list_detail')[0]
