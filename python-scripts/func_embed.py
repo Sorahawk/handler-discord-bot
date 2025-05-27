@@ -3,11 +3,12 @@ from imports import *
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 # Thus, obtain image data to pass into Discord directly
-async def add_embed_image(image_link, embed_msg, use_proxy=False):
+async def add_embed_image(image_link, embed_msg, is_thumbnail=False, use_proxy=False):
 	image_data = await make_get_request(image_link, use_proxy, get_content=True)
 	image_file = discord.File(io.BytesIO(image_data), filename="embed_image.jpg")
 
-	embed_msg.set_image(url="attachment://embed_image.jpg")
+	func = set_thumbnail if is_thumbnail else set_image
+	embed_msg.func(url="attachment://embed_image.jpg")
 	return embed_msg, image_file
 
 
