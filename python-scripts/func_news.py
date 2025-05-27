@@ -5,7 +5,7 @@ from imports import *
 async def check_latest_news():
 
 	# retrieve webpage contents via proxy because `www` subdomain seems to be stricter than `info`
-	news_webpage = await make_get_request(JAPANESE_NEWS_URL, use_proxy=True)
+	news_webpage = await make_get_request(JAPANESE_NEWS_URL)
 	html_data = html.fromstring(news_webpage)
 
 	details_list = []

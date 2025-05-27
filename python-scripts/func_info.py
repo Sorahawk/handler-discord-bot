@@ -5,9 +5,9 @@ from imports import *
 async def check_wilds_info():
 
 	# retrieve webpage contents
-	main_webpage = await make_get_request(WILDS_MAIN_URL, use_proxy=True)
+	main_webpage = await make_get_request(WILDS_MAIN_URL)
 	update_webpage = await make_get_request(WILDS_UPDATE_URL)
-	support_webpage = await make_get_request(WILDS_SUPPORT_URL, use_proxy=True)
+	support_webpage = await make_get_request(WILDS_SUPPORT_URL)
 
 	# process HTML data
 	main_html = html.fromstring(main_webpage).find_class('ov-100')[0]  # restrict the data because there are two ImportantNotices in the full HTML
@@ -188,7 +188,7 @@ def check_wilds_update(html_data):
 		if (header := update_details.xpath('dt')[0].text_content().strip()):
 			details['contents_header'] = header
 
-		details['contents'] = '\n'.join([f"• {line.text_content().strip()}" for line in update_details.xpath('dd')])
+		details['contents'] = '\n'.join([f"• {line.text_content().strip()}" for line in update_details.xpath('dd/ul/li')])
 
 		# extract platforms
 		details['platforms'] = ', '.join([p.text_content().strip() for p in item.find_class('latest_update_list_platform')[0].xpath('li')])

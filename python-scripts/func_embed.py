@@ -3,8 +3,8 @@ from imports import *
 
 # Discord is unable to get image content on its own, possibly due to headers being rejected by MH website
 # Thus, obtain image data to pass into Discord directly
-async def add_embed_image(image_link, embed_msg, is_thumbnail=False, use_proxy=False):
-	image_data = await make_get_request(image_link, use_proxy, get_content=True)
+async def add_embed_image(image_link, embed_msg, is_thumbnail=False):
+	image_data = await make_get_request(image_link, get_content=True)
 	image_file = discord.File(io.BytesIO(image_data), filename="embed_image.jpg")
 
 	set_img = embed_msg.set_thumbnail if is_thumbnail else embed_msg.set_image
@@ -56,8 +56,8 @@ async def send_news_embed(details, channel):
 	image_file = None
 
 	if (link := details.get('image_link')):
-		embed_msg, image_file = await add_embed_image(link, embed_msg, use_proxy=True)
+		embed_msg, image_file = await add_embed_image(link, embed_msg)
 	elif (link := details.get('thumbnail_link')):
-		embed_msg, image_file = await add_embed_image(link, embed_msg, is_thumbnail=True, use_proxy=True)
+		embed_msg, image_file = await add_embed_image(link, embed_msg, is_thumbnail=True)
 
 	await channel.send(embed=embed_msg, file=image_file)

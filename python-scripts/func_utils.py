@@ -49,8 +49,10 @@ def format_identifier_date(dt):
 
 # makes a GET request using globally-declared httpx.AsyncClient()
 # usage of proxy required when hitting www.monsterhunter.com; VPN alone unable to bypass, unlike for info.monsterhunter.com
-async def make_get_request(url, use_proxy=False, get_content=False):
-	client = var_global.ASYNC_CLIENT_PROXY if use_proxy else var_global.ASYNC_CLIENT
+async def make_get_request(url, get_content=False):
+
+	# check url subdomain to determine if proxy is necessary
+	client = var_global.ASYNC_CLIENT_PROXY if 'www.monsterhunter.com' in url else var_global.ASYNC_CLIENT
 	response = await client.get(url, headers=STANDARD_HEADERS)
 
 	# check if CloudFront blocked the request, indicating that the VPN is inactive
