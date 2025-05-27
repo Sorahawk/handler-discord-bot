@@ -7,8 +7,8 @@ async def add_embed_image(image_link, embed_msg, is_thumbnail=False, use_proxy=F
 	image_data = await make_get_request(image_link, use_proxy, get_content=True)
 	image_file = discord.File(io.BytesIO(image_data), filename="embed_image.jpg")
 
-	func = set_thumbnail if is_thumbnail else set_image
-	embed_msg.func(url="attachment://embed_image.jpg")
+	set_img = embed_msg.set_thumbnail if is_thumbnail else embed_msg.set_image
+	set_img(url="attachment://embed_image.jpg")
 	return embed_msg, image_file
 
 
