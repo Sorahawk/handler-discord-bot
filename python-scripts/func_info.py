@@ -93,14 +93,14 @@ def check_wilds_notice(html_data):
 
 		return []
 
-	for item in item_list[0].xpath('li/a | li/div'):
+	for item in item_list[0].find_class('ImportantNotice_text_inner'):
 		# format date
-		date = item.xpath('dl/dt')[0].text_content().strip()
+		date = item.xpath('dt')[0].text_content().strip()
 		dt = datetime.strptime(date, '%B %d, %Y')
 
 		# construct identifier string
 		formatted_date = format_identifier_date(dt)
-		caption = ' '.join(item.xpath('dl/dd')[0].text_content().split())
+		caption = ' '.join(item.xpath('dd')[0].text_content().split())
 		identifier = f"{formatted_date}|{caption}"
 
 		# break iteration once any registered item is matched
