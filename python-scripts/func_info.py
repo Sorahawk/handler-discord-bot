@@ -96,7 +96,7 @@ def check_wilds_notice(html_data):
 	for item in item_list[0].find_class('ImportantNotice_text_inner'):
 		# format date
 		date = item.xpath('dt')[0].text_content().strip()
-		dt = datetime.strptime(date, '%B %d, %Y')
+		dt = datetime.strptime(date, '%Y/%m/%d')
 
 		# construct identifier string
 		formatted_date = format_identifier_date(dt)
