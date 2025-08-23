@@ -41,7 +41,7 @@ def check_wilds_news(html_data):
 	for item in item_list:
 		# format date
 		date = item.find_class('news-item__ymd')[0].text_content().strip()
-		dt = datetime.strptime(date, '%Y.%m.%d')
+		dt = datetime.strptime(date, '%Y.%m.%d') if date else ''
 
 		# construct identifier string
 		formatted_date = format_identifier_date(dt)
