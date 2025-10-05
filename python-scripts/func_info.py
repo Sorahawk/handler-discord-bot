@@ -41,6 +41,9 @@ def check_wilds_news(html_data):
 	for item in item_list:
 		# format date
 		date = item.find_class('news-item__ymd')[0].text_content()  # set embed date to release date if it has already passed, otherwise current date
+		
+		await var_global.INFO_CHANNEL.send(f"data: {date}")
+		
 		dt = datetime.strptime(date, '%Y.%m.%d') if date else datetime.now()
 
 		# construct identifier string
