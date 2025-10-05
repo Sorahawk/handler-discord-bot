@@ -40,7 +40,7 @@ def check_wilds_news(html_data):
 	item_list = html_data.find_class('news-container')[0].find_class('news-item')
 	for item in item_list:
 		# format date
-		date = item.find_class('news-item__ymd')[0].text_content().## set embed date to release date if it has already passed, otherwise current date
+		date = item.find_class('news-item__ymd')[0].text_content()  # set embed date to release date if it has already passed, otherwise current date
 		dt = datetime.strptime(date, '%Y.%m.%d') if date else datetime.now()
 
 		# construct identifier string
