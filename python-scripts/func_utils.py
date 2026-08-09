@@ -77,4 +77,4 @@ async def safe_execute(function, channel):
 	try:
 		await function()
 	except Exception as e:
-		await send_traceback(e, channel)
+		return  # await send_traceback(e, channel)
